@@ -1,4 +1,5 @@
 node_modules
-./COPFnotes.sol
-./.vscode
+.vscode
+COPFnotes.sol
+artifacts
 
