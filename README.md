@@ -1,91 +1,54 @@
 Contrato COPF:
 
-Requisitos:
-REQUISITOS COPF:
-Armazenar field_type
-Armazenar plant_type
-Armazenar tokenization_type: Própria ou Terceiros
-Set Função para armazenamento de VALUATION
-Constructor receives all the information stored in BD by folllowing tokenization
-steps.
-Proprietário e Detentor armazenado no COPF
-Só quem tokenizou pode burn a NFT
-Depois que paga a negociação, o ativo é transferido (Verificar como o contrato saberia disso: lembrando que de início talvez seja feito manualmente.)
-Cada fazenda tem vários talhões => validações de soma dos m³ dos talhões não 
-ultrapassar m³ total da floresta.
+# OBS:
+Nesse contexto, o termo asset se refere a um lote de uma fazenda, não à fazenda completa.
 
-Global:
-Nome da Floresta
-Localização
-Dono
-CNPJ
-Capacidade total de metros cúbicos
-Lista de lotes criados
-Mapping do id do lote e informações 1 => struct
+# REQUISITOS COPF:
+Armazenar AssetType {PINUS, EUCALIPTO}
+Armazenar AssetClassification {GREENFIELD, BROWNFIELD}
+Função para settar o asset VALUATION
+Proprietário e Detentor do asset são armazenados no COPF
+Só quem tokenizou inicialmente o ativo (proprietário) pode fazer o burn
 
-total
+Constructor receives all the information stored in BD by folllowing tokenization steps.
 
+Lista of assets inside the contract can be called by the front-end by retrieving the current uint8 assetId and looping till assetId on assets array.
 
-Haverá uma str
-uct que armazenará todas as informações necessárias sobre um talhão específico. 
+Haverá uma struct que armazenará todas as informações necessárias sobre um Lote específico. 
 
-Struct Talhão{
-    //Key: example
-    ownerId: '63bc94195ae1d7b3de34ae6d'
+Struct Asset{
+    initial_owner: initial tokenizator of asset
     assetType: pinus/eucalipto
-    projectStart: 2023 
-    projectEnd:2047
+    projectStart: year 
+    projectEnd: year
     assetClassification: Greenfield/Brownfield
-    ValuationofTalhão: R$100,00 m³
-    deve mostrar valor total: decidido pelo dono
-    deve mostrar asset_owner:
-    deve transferir asset_owner when valor total is paid;    
-Quantidade de metros cúbicos 
+    ValuationLote: R$100,00 m³ (Exemplo)
+    asset_owner: current asset owner
 }
 
 O dono da floresta definirá quantos talhões a floresta terá.
 
 //Quantidade de talhões a serem mintados
-Uint8 public talhãoID = 0;
+Uint8 public assetId = 0;
 
-O dono inicial da floresta será armazenado, mesmo que ela tenha várias transferências em seu ciclo de vida. O dono será armazenado no constructor a fim de que ele seja autorizado a queimar a floresta. (A ser definido como isso exatamente funcionará)
+O dono inicial da floresta será armazenado, mesmo que ela tenha várias transferências em seu ciclo de vida. O dono será armazenado no constructor a fim de que ele seja autorizado a queimar a floresta futuramente. (A ser definido como isso exatamente funcionará.)
 
-Só quem tokenizou pode burn a NFT
-//Dono inicial do contrato
-Address owner;
+Cada lote terá um número associado a ele p/ diferenciá-lo
+Cada Asset é um lote da floresta. Não existirá informações sobre a floresta inteira, APENAS se a mesma for o único lote disponível.
 
-// Cada talhão terá um número associado a ele p/ diferenciá-los
-//máximo de 255 talhões
+//máximo de 255 talhões numa floresta
 Mapping (uint8 => Talhão) TalhãoNFT;
 
-Constructor receives all the information stored in BD by folllowing tokenization
-steps.
 constructor(){
-	Owner = msg.sender? O dono da floresta interagiria com a blockchain? Provavelmente, aqui entraria o worker.
+	Assim como na goTokens, o responsável pelas txs será a conta da company. 
 }
-
-
-function _mint(uint256 talhãoID ) public {
-	//o número do talhão será acrescido
-	talhãoID++
-        _safeMint(msg.sender, talhãoID);
-}
-
-function tokenURI(uint256 talhãoID)
-        public
-        view
-        virtual tokenExist(tokenId)
-        returns (string memory)
-    {
-        return uri(tokenId);
-    }
-
-   function totalSupply() public view returns (uint256) {
-        Return talhãoID;
-    }
-
-   Function burn() public onlyOwner returns (bool) {
-	_burn(talhãoID)
-} 
 
 Cada floresta será um único contrato ERC721 sendo única por ter um endereço único na Ethereum/Polygon. Cada talhão será único ao ser um id único de uma NFT dentro de um 721 único.
+
+# A Fazer 
+Armazenar tokenization_type: Própria ou Terceiros
+Armazenar contractType: TPF ou TPFF
+
+Depois que paga a negociação por meio de (TED/Foxbit?) (A Definir), o ativo é transferido...Mas quem fará tal transação?
+1. Caso estivermos mintando para as contas individuais dos usuários, apenas os mesmos podem transferir - e, dessa forma, precisariam de gas. 
+2. Caso estivermos mintando para a conta da company, as NFTs não serão mostradas nas contas dos usuários.

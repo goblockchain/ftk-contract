@@ -6,18 +6,19 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "../utils/GoTokensRole.sol";
 
-contract COPF is ERC721 {
+contract COPF is ERC721, Ownable, GoTokensRoles {
 
 // Keeps track of which asset of the florest is currently being minted
-uint8 public assetId = 0;
 //max value of above declared florestValuation = 4.294.967.295 = 4 bilhões, 294 milhões, etc.
+uint8 public assetId = 0;
 
 
 //Bushido mentioned there is an ERC that makes the NFT go back to owner after x time?
 
 bool isCurrentAssetAvailableForTransfer = false;
-//uint32 public florestValuation = 0;
 
 enum AssetType {PINUS, EUCALIPTO}
 AssetType public assetType;
@@ -54,11 +55,16 @@ Asset[] public assets;
     event AssetMinted(
         uint32 AssetId,
         address tokenOwner,
-        uint8 tokenId
+        uint8 assetId
     );
     event AssetBurned(
-        uint8 tokenId,
+        uint8 assetId,
         bool wasBurned
+    );
+    event AssetTransferred(
+        uint8 assetId,
+        address newOwner,
+        bool transferred
     );
 
     /**********************************/
@@ -72,8 +78,8 @@ Asset[] public assets;
       ╚═════════════════════════════╝*/
     /**********************************/
 
-modifier isSenderInitialAssetOwner(uint8 _assetId) {
-    require(msg.sender == assets[_assetId].initialOwner, "Only florest's initial owner is allowed for this tx");
+modifier isAccountInitialAssetOwner(uint8 _assetId, address _initialOwner) {
+    require(_initialOwner == assets[_assetId].initialOwner, "Only florest's initial owner is allowed for this tx");
     _;
 }
 
@@ -87,21 +93,30 @@ modifier hasProjectEnded(uint8 _assetId){
       ╚═════════════════════════════╝*/
     /**********************************/
 constructor(
+    address _minter,
+    address _initialOwner,
     uint8 _assetType, 
     uint16 _projectStart, 
     uint16 _projectEnd, 
     uint8 _assetclass
-    ) ERC721("Certificate of PlantedFlorests", "COPF"){
+    ) ERC721("Certificate of PlantedFlorests", "COPF") GoTokensRoles(msg.sender, _minter) {
    
-    assets.push(Asset(msg.sender, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), 0, false, msg.sender));
+    assets.push(Asset(_initialOwner, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), 0, false, _initialOwner));
 
     //first asset minted
-    _mint(msg.sender, 0);
+    _mint(_initialOwner, 0);
+    setApprovalForAll(address(this), true);
+
 }
 
     /*╔══════════════════════════════╗
       ║     CHECK FUNCTIONS          ║
       ╚══════════════════════════════╝*/
+
+
+function checkOwnership() public view returns(address) {
+    return owner();
+}
     
 function isAssetAvailableForTransfer(uint8 _assetId) internal view returns(bool){
         return assets[_assetId].isCurrentAssetAvailableForTransfer;
@@ -117,36 +132,57 @@ function getCurrentYear() external view returns(uint) {
     return currentYear;
 }
 
+    /*╔══════════════════════════════╗
+      ║     CHECK FUNCTIONS          ║
+      ╚══════════════════════════════╝*/
+
+function transferOwnershipInBadCase(address _newOwner) onlyOwner public{
+    transferOwnership(_newOwner);
+}
+
 function setAssetAvailabilityForTransfer(uint8 _assetId, bool _availability) external returns(bool) {
         assets[_assetId].isCurrentAssetAvailableForTransfer = _availability;
         return assets[_assetId].isCurrentAssetAvailableForTransfer;
 }
 
 // make the function available for future mints of other asset in the same florest 
-function mint(AssetType _assetType, uint16 _projectStart, uint16 _projectEnd, AssetClassification _assetclass, uint32 _assetValuation) external {
+function mint(address _initialOwner, AssetType _assetType, uint16 _projectStart, uint16 _projectEnd, AssetClassification _assetclass, uint32 _assetValuation)
+ onlyRole(MINTER_ROLE)
+ external {
     uint8 _assetId = assetId++;
     
-    assets.push(Asset(msg.sender, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), _assetValuation, false, msg.sender));
+    assets.push(Asset(_initialOwner, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), _assetValuation, false, _initialOwner));
 
-    _mint(msg.sender, _assetId);
+    _mint(_initialOwner, _assetId);
     
+    setApprovalForAll(address(this), true);
 }
 
-function burn(uint8 _assetId) 
-    isSenderInitialAssetOwner(_assetId) 
+function burn(uint8 _assetId, address _initialOwner) 
+    isAccountInitialAssetOwner(_assetId, _initialOwner) 
     hasProjectEnded(_assetId)
     external
 {
     _burn(_assetId);
 }
 
-function setAssetValuation(uint8 _assetId, uint32 _assetValuation) external returns(uint32) {
+function setAssetValuation(uint8 _assetId, uint32 _assetValuation) onlyOwner external returns(uint32) {
     assets[_assetId].AssetValuation = _assetValuation;
     return assets[_assetId].AssetValuation;
 }
 
-function transferAsset(uint8 _assetId) external {
+//This function needs to be invoked whenever the TED  transfer has been done
+function transferAsset(uint8 _assetId, address _newOwner) external {
     require(isAssetAvailableForTransfer(_assetId), "asset is currently not available for transfer");
+    setApprovalForAll(address(this), true);
+    address pastOwner = assets[_assetId].tokenOwner;
+    safeTransferFrom(pastOwner, _newOwner, _assetId);
+    assets[_assetId].tokenOwner = _newOwner;
+    emit AssetTransferred(_assetId, _newOwner, assets[_assetId].tokenOwner == _newOwner);
+}
+
+function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
+    return super.supportsInterface(interfaceId);
 }
 
 }
