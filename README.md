@@ -25,7 +25,7 @@ struct Asset {
     AssetClassification assetClassification;
     uint32 AssetValuation;
     bool isCurrentAssetAvailableForTransfer;
-    //It is the current token owner after deals have been made
+    //It is the current token owner after negotiations have been made
     address tokenOwner;
 }
 ```
@@ -42,9 +42,8 @@ Cada Asset é um lote da floresta. Não existirá informações sobre a floresta
 //máximo de 255 talhões numa floresta
 Mapping (uint8 => Talhão) TalhãoNFT;
 
-constructor(){
-	Assim como na goTokens, o responsável pelas txs será a conta da company. 
-}
+Assim como na goTokens, o responsável pelas txs será a conta da company.
+constructor(){}
 
 Cada floresta será um único contrato ERC721 sendo única por ter um endereço único na Ethereum/Polygon. Cada talhão será único ao ser um id único de uma NFT dentro de um 721 único.
 
