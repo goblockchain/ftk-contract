@@ -15,20 +15,23 @@ Constructor receives all the information stored in BD by folllowing tokenization
 Lista of assets inside the contract can be called by the front-end by retrieving the current uint8 assetId and looping till assetId on assets array.
 
 Haverá uma struct que armazenará todas as informações necessárias sobre um Lote específico. 
-
-Struct Asset{
-    initial_owner: initial tokenizator of asset
-    assetType: pinus/eucalipto
-    projectStart: year 
-    projectEnd: year
-    assetClassification: Greenfield/Brownfield
-    ValuationLote: R$100,00 m³ (Exemplo)
-    asset_owner: current asset owner
+`
+struct Asset {
+    //It is the florest's owner when tokenization happened
+    address initialOwner;
+    AssetType assetType;
+    uint16 projectStart;
+    uint16 projectEnd;
+    AssetClassification assetClassification;
+    uint32 AssetValuation;
+    bool isCurrentAssetAvailableForTransfer;
+    //It is the current token owner after deals have been made
+    address tokenOwner;
 }
-
+`
 O dono da floresta definirá quantos talhões a floresta terá.
 
-//Quantidade de talhões a serem mintados
+<! --- Quantidade de talhões a serem mintados -->
 Uint8 public assetId = 0;
 
 O dono inicial da floresta será armazenado, mesmo que ela tenha várias transferências em seu ciclo de vida. O dono será armazenado no constructor a fim de que ele seja autorizado a queimar a floresta futuramente. (A ser definido como isso exatamente funcionará.)
