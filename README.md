@@ -4,12 +4,13 @@ Contrato COPF:
 Nesse contexto, o termo asset se refere a um lote de uma fazenda, não à fazenda completa.
 
 # REQUISITOS COPF:
+```
 Armazenar AssetType {PINUS, EUCALIPTO}
 Armazenar AssetClassification {GREENFIELD, BROWNFIELD}
 Função para settar o asset VALUATION
 Proprietário e Detentor do asset são armazenados no COPF
 Só quem tokenizou inicialmente o ativo (proprietário) pode fazer o burn
-
+```
 Constructor receives all the information stored in BD by folllowing tokenization steps.
 
 Lista of assets inside the contract can be called by the front-end by retrieving the current uint8 assetId and looping till assetId on assets array.
