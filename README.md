@@ -15,7 +15,7 @@ Constructor receives all the information stored in BD by folllowing tokenization
 Lista of assets inside the contract can be called by the front-end by retrieving the current uint8 assetId and looping till assetId on assets array.
 
 Haverá uma struct que armazenará todas as informações necessárias sobre um Lote específico. 
-`
+```
 struct Asset {
     //It is the florest's owner when tokenization happened
     address initialOwner;
@@ -28,7 +28,7 @@ struct Asset {
     //It is the current token owner after deals have been made
     address tokenOwner;
 }
-`
+```
 O dono da floresta definirá quantos talhões a floresta terá.
 
 <! --- Quantidade de talhões a serem mintados -->
