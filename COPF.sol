@@ -2,21 +2,21 @@
 pragma solidity ^0.8.0;
 
 //imports
-//import "hardhat/console.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-//import "@openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../utils/GoTokensRole.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract COPF is ERC721, Ownable, GoTokensRoles {
+//ERC721URIStorage already inherits functions from ERC721
+contract COPF is Ownable, GoTokensRoles, ERC721URIStorage {
 
-// Keeps track of which asset of the florest is currently being minted
+
+//Keeps track of which asset of the florest is currently being minted
 //max value of above declared florestValuation = 4.294.967.295 = 4 bilhões, 294 milhões, etc.
 uint8 public assetId = 0;
 
-
-//Bushido mentioned there is an ERC that makes the NFT go back to owner after x time?
+mapping (uint8 => string) private _tokenURIs;
+string private _baseURIextended;
 
 bool isCurrentAssetAvailableForTransfer = false;
 
@@ -38,6 +38,7 @@ struct Asset {
     bool isCurrentAssetAvailableForTransfer;
     //It is the current token owner after deals have been made
     address tokenOwner;
+    string tokenURI;
 }
 
 Asset[] public assets;
@@ -98,14 +99,19 @@ constructor(
     uint8 _assetType, 
     uint16 _projectStart, 
     uint16 _projectEnd, 
-    uint8 _assetclass
+    uint8 _assetclass,
+    string memory _baseURI,
+    string memory tokenURI_
     ) ERC721("Certificate of PlantedFlorests", "COPF") GoTokensRoles(msg.sender, _minter) {
    
-    assets.push(Asset(_initialOwner, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), 0, false, _initialOwner));
+    assets.push(Asset(_initialOwner, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), 0, false, _initialOwner, tokenURI_));
+    _baseURIextended = _baseURI;
 
     //first asset minted
     _mint(_initialOwner, 0);
     setApprovalToTransferAssets(_initialOwner, msg.sender, true);
+    _setTokenURI(0, tokenURI_);
+
 }
 
     /*╔══════════════════════════════╗
@@ -132,29 +138,40 @@ function getCurrentYear() external view returns(uint) {
 }
 
     /*╔══════════════════════════════╗
-      ║     CHECK FUNCTIONS          ║
+      ║     OTHER FUNCTIONS          ║
       ╚══════════════════════════════╝*/
 
-function transferOwnershipInBadCase(address _newOwner) onlyOwner public{
-    transferOwnership(_newOwner);
+function setBaseURI(string memory baseURI_) external onlyOwner() {
+            _baseURIextended = baseURI_;
 }
 
-function setAssetAvailabilityForTransfer(uint8 _assetId, bool _availability) external onlyRole(MINTER_ROLE) returns(bool) {
+
+//Setting the tokenURI for a specific assetId, we only 
+function setTokenURI(uint8 tokenId, string memory _tokenURI) external virtual {
+        super._setTokenURI(tokenId, _tokenURI);
+}
+
+function _baseURI() internal view virtual override returns (string memory) {
+            return _baseURIextended;
+}
+
+function setAssetAvailabilityForTransfer(uint8 _assetId, bool _availability) external returns(bool) {
         assets[_assetId].isCurrentAssetAvailableForTransfer = _availability;
         return assets[_assetId].isCurrentAssetAvailableForTransfer;
 }
 
 // make the function available for future mints of other asset in the same florest 
-function mint(address _initialOwner, AssetType _assetType, uint16 _projectStart, uint16 _projectEnd, AssetClassification _assetclass, uint32 _assetValuation)
+function mint(address _initialOwner, AssetType _assetType, uint16 _projectStart, uint16 _projectEnd, AssetClassification _assetclass, uint32 _assetValuation, string memory tokenURI_)
  onlyRole(MINTER_ROLE)
  external {
-    uint8 _assetId = ++assetId;
+    uint8 _assetId = assetId++;
     
-    assets.push(Asset(_initialOwner, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), _assetValuation, false, _initialOwner));
+    assets.push(Asset(_initialOwner, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), _assetValuation, false, _initialOwner, tokenURI_));
 
     _mint(_initialOwner, _assetId);
     
     setApprovalToTransferAssets(_initialOwner, msg.sender, true);
+    _setTokenURI(_assetId, tokenURI_);
 }
 
 function burn(uint8 _assetId, address _initialOwner) 
@@ -165,11 +182,6 @@ function burn(uint8 _assetId, address _initialOwner)
     _burn(_assetId);
 }
 
-function setAssetValuation(uint8 _assetId, uint32 _assetValuation) onlyRole(MINTER_ROLE) external returns(uint32) {
-    assets[_assetId].AssetValuation = _assetValuation;
-    return assets[_assetId].AssetValuation;
-}
-
 function setApprovalToTransferAssets(address holderAccount, address operator, bool approved)
     internal onlyRole(MINTER_ROLE)
 {
@@ -177,6 +189,11 @@ function setApprovalToTransferAssets(address holderAccount, address operator, bo
     //The caller of the function (msg.sender) is the approver.
     _setApprovalForAll(holderAccount, operator, approved);
 } 
+
+function setAssetValuation(uint8 _assetId, uint32 _assetValuation) onlyOwner external returns(uint32) {
+    assets[_assetId].AssetValuation = _assetValuation;
+    return assets[_assetId].AssetValuation;
+}
 
 //This function needs to be invoked whenever the TED  transfer has been done
 function transferAsset(uint8 _assetId, address _newOwner) external {
