@@ -1,7 +1,7 @@
 Contrato COPF:
 
 # OBS:
-Nesse contexto, o termo asset se refere a um lote de uma fazenda, não à fazenda completa. Logo, asset = lote.
+Nesse contexto, o termo asset se refere a um lote de uma fazenda, não à fazenda completa. Logo, *asset = lote*.
 Cada tokenId mintado no contrato representa então um lote diferente da fazenda.
 
 # REQUISITOS COPF:
