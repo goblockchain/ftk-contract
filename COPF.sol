@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 //import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+//import "@openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../utils/GoTokensRole.sol";
 
@@ -105,7 +105,8 @@ constructor(
 
     //first asset minted
     _mint(_initialOwner, 0);
-    setApprovalForAll(address(this), true);
+    _setApprovalForAll(_initialOwner, msg.sender, true);
+
 
 }
 
@@ -140,7 +141,7 @@ function transferOwnershipInBadCase(address _newOwner) onlyOwner public{
     transferOwnership(_newOwner);
 }
 
-function setAssetAvailabilityForTransfer(uint8 _assetId, bool _availability) external returns(bool) {
+function setAssetAvailabilityForTransfer(uint8 _assetId, bool _availability) external onlyRole(MINTER_ROLE) returns(bool) {
         assets[_assetId].isCurrentAssetAvailableForTransfer = _availability;
         return assets[_assetId].isCurrentAssetAvailableForTransfer;
 }
@@ -149,13 +150,13 @@ function setAssetAvailabilityForTransfer(uint8 _assetId, bool _availability) ext
 function mint(address _initialOwner, AssetType _assetType, uint16 _projectStart, uint16 _projectEnd, AssetClassification _assetclass, uint32 _assetValuation)
  onlyRole(MINTER_ROLE)
  external {
-    uint8 _assetId = assetId++;
+    uint8 _assetId = ++assetId;
     
     assets.push(Asset(_initialOwner, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), _assetValuation, false, _initialOwner));
 
     _mint(_initialOwner, _assetId);
     
-    setApprovalForAll(address(this), true);
+    _setApprovalForAll(_initialOwner, msg.sender, true);
 }
 
 function burn(uint8 _assetId, address _initialOwner) 
@@ -166,7 +167,7 @@ function burn(uint8 _assetId, address _initialOwner)
     _burn(_assetId);
 }
 
-function setAssetValuation(uint8 _assetId, uint32 _assetValuation) onlyOwner external returns(uint32) {
+function setAssetValuation(uint8 _assetId, uint32 _assetValuation) onlyRole(MINTER_ROLE) external returns(uint32) {
     assets[_assetId].AssetValuation = _assetValuation;
     return assets[_assetId].AssetValuation;
 }
@@ -174,8 +175,8 @@ function setAssetValuation(uint8 _assetId, uint32 _assetValuation) onlyOwner ext
 //This function needs to be invoked whenever the TED  transfer has been done
 function transferAsset(uint8 _assetId, address _newOwner) external {
     require(isAssetAvailableForTransfer(_assetId), "asset is currently not available for transfer");
-    setApprovalForAll(address(this), true);
     address pastOwner = assets[_assetId].tokenOwner;
+    _setApprovalForAll(pastOwner, msg.sender, true);
     safeTransferFrom(pastOwner, _newOwner, _assetId);
     assets[_assetId].tokenOwner = _newOwner;
     emit AssetTransferred(_assetId, _newOwner, assets[_assetId].tokenOwner == _newOwner);
