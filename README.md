@@ -1,7 +1,7 @@
 Contrato COPF:
 
 # OBS:
-Nesse contexto, o termo asset se refere a um lote de uma fazenda, não à fazenda completa. Logo, asset = lote.
+Nesse contexto, o termo asset se refere a um *lote* de uma fazenda, não à fazenda completa. Logo, *asset = lote*.
 Cada tokenId mintado no contrato representa então um lote diferente da fazenda.
 
 # REQUISITOS COPF:
@@ -35,7 +35,7 @@ struct Asset {
 
 ![struct](https://user-images.githubusercontent.com/79999985/216133976-41b8cfff-b443-4bfe-9f2b-f6db12c7a6f8.png)
 
-O dono da floresta definirá quantos talhões a floresta terá e o máximo será de 255 talhões. (Deve ser ajustado?)
+O dono da floresta definirá quantos talhões a floresta terá e o máximo será de 255 talhões. **(Deve ser ajustado?)**
 <! --- Quantidade de talhões a serem mintados -->
 Uint8 public assetId = 0;
 
