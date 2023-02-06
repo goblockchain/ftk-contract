@@ -106,8 +106,6 @@ constructor(
     //first asset minted
     _mint(_initialOwner, 0);
     setApprovalToTransferAssets(_initialOwner, msg.sender, true);
-
-
 }
 
     /*╔══════════════════════════════╗
