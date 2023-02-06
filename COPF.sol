@@ -105,7 +105,7 @@ constructor(
 
     //first asset minted
     _mint(_initialOwner, 0);
-    _setApprovalForAll(_initialOwner, msg.sender, true);
+    setApprovalToTransferAssets(_initialOwner, msg.sender, true);
 
 
 }
@@ -156,7 +156,7 @@ function mint(address _initialOwner, AssetType _assetType, uint16 _projectStart,
 
     _mint(_initialOwner, _assetId);
     
-    _setApprovalForAll(_initialOwner, msg.sender, true);
+    setApprovalToTransferAssets(_initialOwner, msg.sender, true);
 }
 
 function burn(uint8 _assetId, address _initialOwner) 
@@ -172,16 +172,26 @@ function setAssetValuation(uint8 _assetId, uint32 _assetValuation) onlyRole(MINT
     return assets[_assetId].AssetValuation;
 }
 
+function setApprovalToTransferAssets(address holderAccount, address operator, bool approved)
+    internal onlyRole(MINTER_ROLE)
+{
+    //The setApprovalForAll() function is used to assign or revoke the full approval rights to the given operator.
+    //The caller of the function (msg.sender) is the approver.
+    _setApprovalForAll(holderAccount, operator, approved);
+} 
+
 //This function needs to be invoked whenever the TED  transfer has been done
 function transferAsset(uint8 _assetId, address _newOwner) external {
     require(isAssetAvailableForTransfer(_assetId), "asset is currently not available for transfer");
     address pastOwner = assets[_assetId].tokenOwner;
-    _setApprovalForAll(pastOwner, msg.sender, true);
+    setApprovalToTransferAssets(pastOwner, msg.sender, true);
     safeTransferFrom(pastOwner, _newOwner, _assetId);
     assets[_assetId].tokenOwner = _newOwner;
     emit AssetTransferred(_assetId, _newOwner, assets[_assetId].tokenOwner == _newOwner);
 }
 
+//function declared to avoid the below compilation error:
+//TypeError: Derived contract must override function "supportsInterface". Two or more base classes define function with same name and parameter types.
 function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
     return super.supportsInterface(interfaceId);
 }
