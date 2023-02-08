@@ -18,7 +18,6 @@ uint8 public assetId = 1;
 uint16 public currentYear = 2023;
 
 mapping (uint8 => string) private _tokenURIs;
-string private _baseURIextended;
 
 bool isCurrentAssetAvailableForTransfer = false;
 
