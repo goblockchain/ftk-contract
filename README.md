@@ -82,9 +82,10 @@ Cada floresta será um único contrato ERC721 sendo única por ter um endereço 
 ![karl](https://user-images.githubusercontent.com/79999985/217381032-0ea01148-bd8d-4c39-91e8-8c16f8453c0f.png)
 
 
-# A Fazer 
-Definir se o máximo de talhões será 255 mesmo.
+# Breaking Changes 
 Definir se o ERC20 ficará em um arquivo separado ou serão dois contratos nesse mesmo arquivo .sol?
+Agora existe a variável ```maxAssetsQuantity``` que é definida logo na criação do contrato e define o máximo de lotes que podem ser mintados pelo contrato. Foi adicionado também a validação na função `mint` em relação à quantidade de lotes disponíveis para mint. 
+Foi trocado a interface do contrato, sendo utilizada a versão ERC1155 que permite a existência de múltiplas cópias de uma mesma NFT/lote. Dessa forma, um usuário pode possuir múltiplas cópias do mesmo lote - que são as subáreas de um lote conforme definido em reunião. 
 
 Depois que paga a negociação por meio de (TED/Foxbit?) (A Definir), o ativo é transferido por meio do MINTER_ROLE.
 1.1 O ADMIN_ROLE será o *msg.sender* que fará o deploy do contrato na blockchain.
