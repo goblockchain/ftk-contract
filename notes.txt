@@ -1,0 +1,20 @@
+TO DO:
+DONE Create validation on minting to not allow more than its max.
+DONE Make sure a different amount can be transferred of tokens with multiple amounts
+NOT DONE: Make sure that there is a way to mint the same id to different accounts:
+Asset MUST BE transferred to different accounts, but can't be MINTED into multiple accounts 
+= MORE GAS EXPENSIVE because of for loops. A solution: the MINTER may mint to his
+own account and then transfer the assets to the other accounts.
+DONE Make sure that there is a way to transfer a tokenId to multiple owners
+DONE Make sure burnable function is working correctly
+
+Make sure in constructor, ids.length <= assetId
+
+Perguntas para Rodrigo:
+O tokenizador deve ser o único que pode queimar o token? Quando há a queima, 
+a queima se refere a todos os lotes ou somente a um especificamente?
+A queima só pode acontecer quando estivermos no ano do fim do projeto?
+A FTK ficará responsável pelo valuation de cada lote?
+TPFF/R deverá ser salvo no SC? Falar sobre informações que estão sendo salvas até 
+o momento...
+

@@ -2,18 +2,19 @@
 pragma solidity ^0.8.0;
 
 //imports
-import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../utils/GoTokensRole.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "../../utils/GoTokensRole.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 
 //ERC721URIStorage already inherits functions from ERC721
-contract COPF is Ownable, GoTokensRoles, ERC721URIStorage {
+contract COPF is Ownable, GoTokensRoles, ERC1155, ERC1155Burnable {
 
 
 //Keeps track of which asset of the florest is currently being minted
 //max value of above declared florestValuation = 4.294.967.295 = 4 bilhões, 294 milhões, etc.
-uint8 public assetId = 0;
+uint8 public maxAssetsQuantity;
+uint8 public assetId = 1;
 uint16 public currentYear = 2023;
 
 mapping (uint8 => string) private _tokenURIs;
@@ -39,10 +40,10 @@ struct Asset {
     bool isCurrentAssetAvailableForTransfer;
     //It is the current token owner after deals have been made
     address tokenOwner;
-    string tokenURI;
 }
 
-Asset[] public assets;
+//Asset[] public assets;
+mapping(uint8 => Asset) public assets;
 
     /*╔═════════════════════════════╗
       ║           EVENTS            ║
@@ -86,7 +87,7 @@ modifier isAccountInitialAssetOwner(uint8 _assetId, address _initialOwner) {
 }
 
 modifier hasProjectEnded(uint8 _assetId){
-    require(this.getCurrentYear() <= assets[_assetId].projectEnd, "project is still ongoing!");
+    require(this.currentYear() <= assets[_assetId].projectEnd, "project is still ongoing!");
     _;
 }
     /*╔═════════════════════════════╗
@@ -97,29 +98,27 @@ modifier hasProjectEnded(uint8 _assetId){
 constructor(
     address _minter,
     address _initialOwner,
+    uint8 _maxAssetsQuantity,
     uint8 _assetType, 
     uint16 _projectStart, 
     uint16 _projectEnd, 
     uint8 _assetclass,
-    string memory _baseURI,
-    string memory tokenURI_
-    ) ERC721("Certificate of PlantedFlorests", "COPF") GoTokensRoles(msg.sender, _minter) {
-   
-    assets.push(Asset(_initialOwner, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), 0, false, _initialOwner, tokenURI_));
-    _baseURIextended = _baseURI;
+    uint256[] memory _ids,
+    uint256[] memory _amount
+    ) ERC1155("https://game.example/api/item/{id}.json") GoTokensRoles(msg.sender, _minter) {
+   maxAssetsQuantity = _maxAssetsQuantity;
 
-    //first asset minted
-    _mint(_initialOwner, 0);
+    assets[assetId] = (Asset(_initialOwner, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), 0, false, _initialOwner));
+
+    assetId++;
+    _mintBatch(_initialOwner, _ids, _amount, "mint");
     setApprovalToTransferAssets(_initialOwner, msg.sender, true);
-    _setTokenURI(0, tokenURI_);
 
 }
-
     /*╔══════════════════════════════╗
       ║     CHECK FUNCTIONS          ║
       ╚══════════════════════════════╝*/
-
-
+      
 function checkOwnership() public view returns(address) {
     return owner();
 }
@@ -132,35 +131,12 @@ function hasAssetValuationBeenSet(uint8 _assetId) external view returns(bool){
         return assets[_assetId].AssetValuation == 0;
 }
 
-//https://ethereum.stackexchange.com/questions/132708/how-to-get-current-year-from-timestamp-solidity
-function getCurrentYear() external view returns(uint) {
-    //uint currentYear = (block.timestamp / 31557600) + 1970;
-    //The above approach works by giving the correct current year, but KARL identifies a vulnerability on using this approach because 
-    //the block.timestamp can be manipulated by miners.
-    return currentYear;
+function setMaxQuantityForCurrentCOPF(uint8 _maxAssetsQuantity) 
+    onlyRole(MINTER_ROLE)
+    external {
+        maxAssetsQuantity = _maxAssetsQuantity;
 }
 
-    /*╔══════════════════════════════╗
-      ║       URI FUNCTIONS          ║
-      ╚══════════════════════════════╝*/
-
-function setBaseURI(string memory baseURI_) external onlyOwner() {
-            _baseURIextended = baseURI_;
-}
-
-
-//Setting the tokenURI for a specific assetId, we only 
-function setTokenURI(uint8 tokenId, string memory _tokenURI) external virtual {
-        super._setTokenURI(tokenId, _tokenURI);
-}
-
-function _baseURI() internal view virtual override returns (string memory) {
-            return _baseURIextended;
-}
-
-    /*╔══════════════════════════════╗
-      ║   END URI FUNCTIONS          ║
-      ╚══════════════════════════════╝*/
 
 function setCurrentYear(uint16 _currentYear) external onlyRole(MINTER_ROLE) {
         currentYear = _currentYear;
@@ -172,25 +148,17 @@ function setAssetAvailabilityForTransfer(uint8 _assetId, bool _availability) ext
 }
 
 // make the function available for future mints of other asset in the same florest 
-function mint(address _initialOwner, AssetType _assetType, uint16 _projectStart, uint16 _projectEnd, AssetClassification _assetclass, uint32 _assetValuation, string memory tokenURI_)
- onlyRole(MINTER_ROLE)
+function mint(address _initialOwner, AssetType _assetType, uint16 _projectStart, uint16 _projectEnd, AssetClassification _assetclass, uint32 _assetValuation, uint256[] calldata ids, uint256[] calldata amounts)
+ onlyRole(MINTER_ROLE) 
  external {
     uint8 _assetId = assetId++;
+    require(_assetId <= maxAssetsQuantity, "Sorry, you can't tokenize more assets");
     
-    assets.push(Asset(_initialOwner, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), _assetValuation, false, _initialOwner, tokenURI_));
+    assets[_assetId] = (Asset(_initialOwner, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), _assetValuation, false, _initialOwner));
 
-    _mint(_initialOwner, _assetId);
+    _mintBatch(_initialOwner, ids, amounts, "minting");
     
     setApprovalToTransferAssets(_initialOwner, msg.sender, true);
-    _setTokenURI(_assetId, tokenURI_);
-}
-
-function burn(uint8 _assetId, address _initialOwner) 
-    isAccountInitialAssetOwner(_assetId, _initialOwner) 
-    hasProjectEnded(_assetId)
-    external
-{
-    _burn(_assetId);
 }
 
 function setApprovalToTransferAssets(address holderAccount, address operator, bool approved)
@@ -207,18 +175,18 @@ function setAssetValuation(uint8 _assetId, uint32 _assetValuation) onlyOwner ext
 }
 
 //This function needs to be invoked whenever the TED  transfer has been done
-function transferAsset(uint8 _assetId, address _newOwner) external {
+function transferAsset(uint8 _assetId, address _newOwner, uint256 _amount) external {
     require(isAssetAvailableForTransfer(_assetId), "asset is currently not available for transfer");
     address pastOwner = assets[_assetId].tokenOwner;
     setApprovalToTransferAssets(pastOwner, msg.sender, true);
-    safeTransferFrom(pastOwner, _newOwner, _assetId);
+    safeTransferFrom(pastOwner, _newOwner, _assetId, _amount, "transfer");
     assets[_assetId].tokenOwner = _newOwner;
     emit AssetTransferred(_assetId, _newOwner, assets[_assetId].tokenOwner == _newOwner);
 }
 
 //function declared to avoid the below compilation error:
 //TypeError: Derived contract must override function "supportsInterface". Two or more base classes define function with same name and parameter types.
-function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
+function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155, AccessControl) returns (bool) {
     return super.supportsInterface(interfaceId);
 }
 
