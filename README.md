@@ -96,8 +96,8 @@ Lote/NFT:
 | Lote | Ano de Corte| 
 | Lote | Tipo de Tokenização |
 | Lote | Valor de venda (vem da FTK) |
-| Lote | proprietário |
-| Lote | atual detentor da NFT |
+| Lote | Proprietário |
+| Lote | Atual detentor da NFT |
 
 ### Regras de Negócio:
 Volume máximo tokenizado pode ser até 80% do volume total estimado pela FTK.
