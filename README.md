@@ -71,6 +71,16 @@ Na imagem abaixo, a localização do lote poderá pertencer apenas ao talhão 1 
 * Ano de Plantio
 * Ano de Corte
 
+### Estruturas
+| Struct | Propriedade |
+| ------ | ------ |
+|  Talhão | Coordenadas geográficas |
+| Talhão |Potencial total de m³ de madeira|
+|  Talhão| Tipo de madeira|
+| Talhão | Idade do talhão|
+| Talhão | Ano de Plantio |
+| Talhão | Ano de Corte| 
+
 ### Regras de Negócio:
 Volume máximo tokenizado pode ser até 80% do volume total estimado pela FTK.
 
