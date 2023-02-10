@@ -1,11 +1,23 @@
 # COPF
 ## _Dados Armazenados no Contrato_
-Dados gerais da raiz
-* localização[] do/s talhão/ões
-* Nome da Fazenda
-* Matrícula do Imóvel
-* Quantidade de talhões
-* Link do dataRoom
+Váriaveis Globais do Smart Contract 
+| Nível | Variável | Type |
+| ------ | ------ | ------ | 
+| Smart Contract | localizações dos talhões | Array |
+| Smart Contract | Imagens | Array |
+| Smart Contract |Potencial total de m³ de madeira| Number |
+| Smart Contract | Tipo de madeira| Enum |
+| Smart Contract | Idade do talhão| Dates |
+| Smart Contract | Ano de Plantio | Dates |
+| Smart Contract | Ano de Corte| Dates |
+| Smart Contract | % Máxima de Tokenização Universal | Number = 80% |
+| Smart Contract | Nome da Floresta | Texto |
+| Smart Contract | Matrícula do Imóvel | Texto |
+| Smart Contract | Quantidade de talhões na floresta | Number |
+| Smart Contract | % máxima de tokenização liberada p/ a floresta | Number |
+| Smart Contract | link do data room | Texto |
+| Smart Contract | link do contrato de compra e venda | Texto |
+| Smart Contract | link do contrato de tokenização | Texto |
 
 ## Regras de Tokenização:
 * _(1)_ Quantidade potencial de m³ de madeira (Decidido pela FTK). 
@@ -42,32 +54,10 @@ Lote/NFT:
 | Lote | Idade do talhão (MM/YYYY) |
 | Lote | Ano de Plantio |
 | Lote | Ano de Corte| 
-| Lote | Tipo de Tokenização |
+| Lote | Tipo de Tokenização (TPF ou TPFF) |
 | Lote | Valor de venda (vem da FTK) |
 | Lote | Proprietário |
 | Lote | Atual detentor da NFT |
-
-No entanto, algumas informações ficarão armazenadas a nível de contrato:
-
-Váriaveis Globais do Smart Contract 
-| Nível | Variável | Type |
-| ------ | ------ | ------ | 
-| Smart Contract | localizações dos talhões | Array |
-| Smart Contract | Imagens | Array |
-| Smart Contract |Potencial total de m³ de madeira| Number |
-| Smart Contract | Tipo de madeira| Enum |
-| Smart Contract | Idade do talhão| Dates |
-| Smart Contract | Ano de Plantio | Dates |
-| Smart Contract | Ano de Corte| Dates |
-| Smart Contract | % Máxima de Tokenização Universal | Number = 80% |
-| Smart Contract | Nome da Floresta | Texto |
-| Smart Contract | Matrícula do Imóvel | Texto |
-| Smart Contract | Quantidade de talhões na floresta | Number |
-| Smart Contract | % máxima de tokenização liberada p/ a floresta | Number |
-| Smart Contract | link do data room | Texto |
-| Smart Contract | link do contrato de compra e venda | Texto |
-| Smart Contract | link do contrato de tokenização | Texto |
-
 
 ## Localização do Lote
 ### Lote constituído de pedaços diferentes de vários talhões 
