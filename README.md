@@ -112,5 +112,11 @@ Volume máximo tokenizado pode ser até 80% do volume total estimado pela FTK.
 
 - API quem será responsável por se conectar com um banco, gerando uma conta que cuidará do fluxo monetário.
 
+### Perguntas:
+
+O que significa: "Para o marketplace, é necessária a existência de um filtro que limite a capacidade do usuário de expôr seu asset?"
+Cada NFT terá uma matrícula ou haverá uma matrícula só em relação ao COPF?
+O link do Data Room terá o link do valuation ou serão links independentes?
+
 
 
