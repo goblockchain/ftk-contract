@@ -43,6 +43,7 @@ Talhão:
 | Talhão | Idade do talhão|
 | Talhão | Ano de Plantio |
 | Talhão | Ano de Corte| 
+| Talhão | Greenfield/Brownfield|
 
 Lote/NFT:
 | Struct | Propriedade |
@@ -58,6 +59,7 @@ Lote/NFT:
 | Lote | Valor de venda (vem da FTK) |
 | Lote | Proprietário |
 | Lote | Atual detentor da NFT |
+| Lote | Greenfield/Brownfield|
 
 ## Localização do Lote
 ### Lote constituído de pedaços diferentes de vários talhões 
