@@ -60,8 +60,11 @@ Lote = % de um talhão que é integralmente do mesmo ano e mesma espécie (homog
 Talhões heterogêneos sempre farão parte de lotes diferentes.
 #### Exemplos da regra acima:
 Na imagem abaixo, os dois talhões devem ser obrigatoriamente **homogêneos** para que a área vermelha seja um lote só.
+![Captura de tela 2023-02-09 224910 (1)](https://user-images.githubusercontent.com/79999985/218179464-bd8f275a-a6e5-48dc-a3a1-efbb47f74413.png)
 
-Na imagem abaixo, a localização do lote poderá pertencer apenas ao talhão 1 **ou** 2, pois os talhões são heterogêneos quanto à idade e espécie.
+Na imagem abaixo, a localização do lote poderá pertencer apenas ao talhão 1 **ou** 2, pois os talhões adjacentes são heterogêneos quanto à idade e espécie.
+![Captura de tela 2023-02-09 224722 (1)](https://user-images.githubusercontent.com/79999985/218179524-a9502db0-d0de-4612-a77e-8800e97fd5d7.png)
+
 
 ### Estrutura do Talhão
 * Coordenadas geográficas do talhão
