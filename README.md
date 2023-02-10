@@ -72,6 +72,25 @@ Na imagem abaixo, a localização do lote poderá pertencer apenas ao talhão 1 
 * Ano de Corte
 
 ### Estruturas
+Váriaveis Globais do Smart Contract 
+| Nível | Variável | Type |
+| ------ | ------ | ------ | 
+| Smart Contract | localizações dos talhões | Array |
+| Smart Contract | Imagens | Array |
+| Smart Contract |Potencial total de m³ de madeira| Number |
+| Smart Contract | Tipo de madeira| Enum |
+| Smart Contract | Idade do talhão| Dates |
+| Smart Contract | Ano de Plantio | Dates |
+| Smart Contract | Ano de Corte| Dates |
+| Smart Contract | Máximo P/ Tokenizar | Number = 80% |
+| Smart Contract | Nome da Floresta | Texto |
+| Smart Contract | Matrícula do Imóvel | Texto |
+| Smart Contract | Quantidade de talhões na floresta | Number |
+| Smart Contract | % máxima de tokenização liberada p/ a floresta | Number |
+| Smart Contract | link do data room | Texto |
+| Smart Contract | link do contrato de compra e venda | Texto |
+| Smart Contract | link do contrato de tokenização | Texto |
+| Smart Contract | % máxima de tokenização universal | Number | 
 
 Talhão:
 | Struct | Propriedade |
