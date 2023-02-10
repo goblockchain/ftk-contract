@@ -66,7 +66,8 @@ Na imagem abaixo, os dois talhões devem ser obrigatoriamente **homogêneos** pa
 
 Na imagem abaixo, a localização do lote poderá pertencer apenas ao talhão 1 **ou** 2, pois os talhões adjacentes são heterogêneos quanto à idade e espécie.
 
-![Captura de tela 2023-02-09 224722 (1)](https://user-images.githubusercontent.com/79999985/218179770-79541569-08ff-4dba-a799-7fd8b88e4840.png)
+![Captura de tela 2023-02-09 224722 (1)](https://user-images.githubusercontent.com/79999985/218180013-1a6ee098-97f1-4d8e-a8da-60bdbc954633.png)
+
 
 
 
