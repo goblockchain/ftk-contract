@@ -21,84 +21,6 @@ Dados gerais da raiz
 Suponha que a floresta tem 2 talhões, e a porcentagem do volume total de 2 talhões a ser tokenizada é 25%, e essa porcentagem foi decidida pela FTK (A FTK estipula a % a ser disponível para tokenização de acordo com alguns fatores, por exemplo, idade do plantio). O proprietário florestal, no entanto, decidiu tokenizar apenas 10% desssa floresta (primeiro lote). Imagine então que a figura abaixo representa o que o proprietário decidiu tokenizar. Dessa forma, no mesmo ano, o proprietário da floresta poderá, por exemplo, optar por tokenizar mais 15%, sendo esses 15% outro lote. Então cada um dos lotes será uma NFT. (Localização) O talhão é importante para que assegure que o material (madeira) a ser recolhida não seja de uma área diferente/qualidade inferior. Caso os dois talhões sejam homogêneos entre si, o proprietário poderá tokenizar um lote que pertença simultaneamente aos dois talhões. Caso os dois talhões sejam heterogêneos entre si,  o proprietário o lote fará então, **_necessariamente_**, parte de apenas um dos talhões.
 
 Cada _struct_ Talhão e cada NFT, por si só, terão suas informações próprias: 
-* proprietário
-* idade de plantio
-* tipo de madeira
-* data de plantio
-* ano de corte
-* localização -> A localização do lote é uma localização que pode, ou não, coincidir com uma localização que está no array de localização dos talhões. A localização do lote refere-se exclusivamente às coordenadas da parte TOKENIZADA - e não à parte passível de tokenização.
-* detentor atual do da NFT - não faz sentido ter dono atual do talhão, pois sempre será do proprietário, a menos que seja uma TPF cujo lote seja um talhão completo.
-* valor de venda - (vem da plataforma)
-* porcentagem tokenizada (em relação ao total liberado para a floresta)
-* imagem do talhão e da NFT.
-* tipo de tokenização da NFT: TPR ou TPFF 
-
-No entanto, algumas informações ficarão armazenadas a nível de contrato:
-
-* localização[] do/s talhão/ões
-* imagens[] //mesma length do [] de localização
-* Nome da Fazenda
-* Matrícula do Imóvel
-* Quantidade de talhões na floresta
-* porcentagem máxima de tokenização liberada p/ a floresta 
-* link do data room
-* link do contrato de compra e venda
-* link do valuation (estará dentro do link do data room? NÃO ENTENDI)
-* link do contrato de tokenização
-* mapping (string => NFT) garantia; //Cada NFT pode, ou não, ter uma garantia de um imóvel.
-* porcentagem máxima de tokenização = 80000 -> colocar no contrato para evitar erros do backoffice.
-
-## Localização do Lote
-### Lote constituído de pedaços diferentes de vários talhões 
-Lote = conjunto de %s de n talhões {1,2,...,n} de mesmo ano e mesma espécie (homogêneos).
-NFT = lote. 
-
-### Lote constituído de pedaço de um único talhão
-Lote = % de um talhão que é integralmente do mesmo ano e mesma espécie (homogêneo).
-
-### _Regra_: 
-Talhões heterogêneos sempre farão parte de lotes diferentes.
-#### Exemplos da regra acima:
-Na imagem abaixo, os dois talhões devem ser obrigatoriamente **homogêneos** para que a área vermelha seja um lote só.
-
-![Captura de tela 2023-02-09 224910 (1)](https://user-images.githubusercontent.com/79999985/218179809-0e674780-8ded-4a33-ae34-80c641b300d2.png)
-
-
-Na imagem abaixo, a localização do lote poderá pertencer apenas ao talhão 1 **ou** 2, pois os talhões adjacentes são heterogêneos quanto à idade e espécie.
-
-![Captura de tela 2023-02-09 224722 (1)](https://user-images.githubusercontent.com/79999985/218180013-1a6ee098-97f1-4d8e-a8da-60bdbc954633.png)
-
-
-
-
-### Estrutura do Talhão
-* Coordenadas geográficas do talhão
-* Potencial total do talhão
-* Tipo de madeira
-* Idade do talhão (MM/YYYY)
-* Ano de Plantio
-* Ano de Corte
-
-### Estruturas
-Váriaveis Globais do Smart Contract 
-| Nível | Variável | Type |
-| ------ | ------ | ------ | 
-| Smart Contract | localizações dos talhões | Array |
-| Smart Contract | Imagens | Array |
-| Smart Contract |Potencial total de m³ de madeira| Number |
-| Smart Contract | Tipo de madeira| Enum |
-| Smart Contract | Idade do talhão| Dates |
-| Smart Contract | Ano de Plantio | Dates |
-| Smart Contract | Ano de Corte| Dates |
-| Smart Contract | % Máxima de Tokenização Universal | Number = 80% |
-| Smart Contract | Nome da Floresta | Texto |
-| Smart Contract | Matrícula do Imóvel | Texto |
-| Smart Contract | Quantidade de talhões na floresta | Number |
-| Smart Contract | % máxima de tokenização liberada p/ a floresta | Number |
-| Smart Contract | link do data room | Texto |
-| Smart Contract | link do contrato de compra e venda | Texto |
-| Smart Contract | link do contrato de tokenização | Texto |
-
 Talhão:
 | Struct | Propriedade |
 | ------ | ------ |
@@ -124,6 +46,48 @@ Lote/NFT:
 | Lote | Valor de venda (vem da FTK) |
 | Lote | Proprietário |
 | Lote | Atual detentor da NFT |
+
+No entanto, algumas informações ficarão armazenadas a nível de contrato:
+
+Váriaveis Globais do Smart Contract 
+| Nível | Variável | Type |
+| ------ | ------ | ------ | 
+| Smart Contract | localizações dos talhões | Array |
+| Smart Contract | Imagens | Array |
+| Smart Contract |Potencial total de m³ de madeira| Number |
+| Smart Contract | Tipo de madeira| Enum |
+| Smart Contract | Idade do talhão| Dates |
+| Smart Contract | Ano de Plantio | Dates |
+| Smart Contract | Ano de Corte| Dates |
+| Smart Contract | % Máxima de Tokenização Universal | Number = 80% |
+| Smart Contract | Nome da Floresta | Texto |
+| Smart Contract | Matrícula do Imóvel | Texto |
+| Smart Contract | Quantidade de talhões na floresta | Number |
+| Smart Contract | % máxima de tokenização liberada p/ a floresta | Number |
+| Smart Contract | link do data room | Texto |
+| Smart Contract | link do contrato de compra e venda | Texto |
+| Smart Contract | link do contrato de tokenização | Texto |
+
+
+## Localização do Lote
+### Lote constituído de pedaços diferentes de vários talhões 
+Lote = conjunto de %s de n talhões {1,2,...,n} de mesmo ano e mesma espécie (homogêneos).
+NFT = lote. 
+
+### Lote constituído de pedaço de um único talhão
+Lote = % de um talhão que é integralmente do mesmo ano e mesma espécie (homogêneo).
+
+### _Regra_: 
+Talhões heterogêneos sempre farão parte de lotes diferentes.
+#### Exemplos da regra acima:
+Na imagem abaixo, os dois talhões devem ser obrigatoriamente **homogêneos** para que a área vermelha seja um lote só.
+
+![Captura de tela 2023-02-09 224910 (1)](https://user-images.githubusercontent.com/79999985/218179809-0e674780-8ded-4a33-ae34-80c641b300d2.png)
+
+
+Na imagem abaixo, a localização do lote poderá pertencer apenas ao talhão 1 **ou** 2, pois os talhões adjacentes são heterogêneos quanto à idade e espécie.
+
+![Captura de tela 2023-02-09 224722 (1)](https://user-images.githubusercontent.com/79999985/218180013-1a6ee098-97f1-4d8e-a8da-60bdbc954633.png)
 
 ### Regras de Negócio:
 Volume máximo tokenizado pode ser até 80% do volume total estimado pela FTK.
@@ -153,20 +117,6 @@ Volume máximo tokenizado pode ser até 80% do volume total estimado pela FTK.
 - Para o marketplace, é necessária a existência de um filtro que limite a capacidade do usuário de expôr seu asset; (NÃO ENTENDI)
 - Valor de venda será determinado pelo próprio detentor do token no momento da transação;
 - 3% do valor de venda deve ser transferido para a ForesToken para que a plataforma monetize em cima das transações.
-
-- Dados necessários:
-    - Dados do comprador;
-    - Dados do proprietário;
-    - Valor de venda;
-    - Localização do talhão ou de múltiplos talhões;
-    - Volume;
-    - Matrícula do imóvel;
-    - Data de plantio (MM/YYYY);
-    - Data de corte (MM/YYYY);
-    - Link do contrato de compra e venda;
-    - Link do contrato de tokenização;
-    - Link do dataroom;
-    - Link do valuation;
 
 ### Necessidade da plataforma
 
