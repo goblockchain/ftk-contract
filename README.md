@@ -82,7 +82,7 @@ Váriaveis Globais do Smart Contract
 | Smart Contract | Idade do talhão| Dates |
 | Smart Contract | Ano de Plantio | Dates |
 | Smart Contract | Ano de Corte| Dates |
-| Smart Contract | Máximo P/ Tokenizar | Number = 80% |
+| Smart Contract | % Máxima de Tokenização Universal | Number = 80% |
 | Smart Contract | Nome da Floresta | Texto |
 | Smart Contract | Matrícula do Imóvel | Texto |
 | Smart Contract | Quantidade de talhões na floresta | Number |
@@ -90,7 +90,6 @@ Váriaveis Globais do Smart Contract
 | Smart Contract | link do data room | Texto |
 | Smart Contract | link do contrato de compra e venda | Texto |
 | Smart Contract | link do contrato de tokenização | Texto |
-| Smart Contract | % máxima de tokenização universal | Number | 
 
 Talhão:
 | Struct | Propriedade |
