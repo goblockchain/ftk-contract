@@ -92,6 +92,7 @@ Volume máximo tokenizado pode ser até 80% do volume total estimado pela FTK.
 | Ano 4 | 60% |
 | Ano 5 | 70% |
 | Ano 6 e 7 | 80% |
+
  Exemplo:
  Usuário tokenizou 30% da sua floresta no Ano1! No ano 2, ele poderá tokenizar apenas mais 10%, no máximo.
         
