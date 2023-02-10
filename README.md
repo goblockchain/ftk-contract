@@ -72,14 +72,32 @@ Na imagem abaixo, a localização do lote poderá pertencer apenas ao talhão 1 
 * Ano de Corte
 
 ### Estruturas
+
+Talhão:
 | Struct | Propriedade |
 | ------ | ------ |
 |  Talhão | Coordenadas geográficas |
+| Talhão | Imagem |
 | Talhão |Potencial total de m³ de madeira|
 |  Talhão| Tipo de madeira|
 | Talhão | Idade do talhão|
 | Talhão | Ano de Plantio |
 | Talhão | Ano de Corte| 
+
+Lote/NFT:
+| Struct | Propriedade |
+| ------ | ------ |
+|  Lote | Coordenadas geográficas |
+| Lote | Imagem |
+| Lote |Porcentagem tokenizada|
+|  Lote | Tipo de madeira|
+| Lote | Idade do talhão (MM/YYYY) |
+| Lote | Ano de Plantio |
+| Lote | Ano de Corte| 
+| Lote | Tipo de Tokenização |
+| Lote | Valor de venda (vem da FTK) |
+| Lote | proprietário |
+| Lote | atual detentor da NFT |
 
 ### Regras de Negócio:
 Volume máximo tokenizado pode ser até 80% do volume total estimado pela FTK.
