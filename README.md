@@ -1,92 +1,121 @@
-Contrato COPF:
+# COPF
+## _Dados Armazenados no Contrato_
+Dados gerais da raiz
+* localização[] do/s talhão/ões
+* Nome da Fazenda
+* Matrícula do Imóvel
+* Quantidade de talhões
+* Link do dataRoom
 
-# Como Utilizar:
-<ol>
-<li>1. Clone o reposítório.</li>
-<li> 2. No terminal, use o comando:
-![remix3](https://user-images.githubusercontent.com/79999985/217089820-9edc73a6-4c3a-4003-bedf-9e70fccf16f0.png)
-<li> 3. No site https://remix.ethereum.org/, selecione `connect to localhost` como mostrado na imagem abaixo: </li>
-</ol>
+## Regras de Tokenização:
+* _(1)_ Quantidade potencial de m³ de madeira (Decidido pela FTK). 
+* _(2)_ Quantidade liberada pela FTK para ser tokenizada. (Decidido pela FTK).
+* _(3)_ A quantidade liberada (pela FTK) e tokenizada (pelo proprietário) não pode passar dos 80% do tamanho da área com potencial de tokenização _(1)_.
 
-![remix2](https://user-images.githubusercontent.com/79999985/217088827-f0e2ec6d-1b7b-449c-b82b-80609eeba846.png)
+## Definições
+* **_Data Room_**: Link que contém informações sobre a floresta como, por exemplo, documentação do due diligence, matrícula, documentação do proprietário. O data room é usado pela FTK e comprador para acompanhar se a floresta está crescendo.
+* **_Talhão_**: Área com potencial de ser tokenizada dentro de uma floresta e é sempre homogênea em relação à sua idade e em relação à espécie contida nela.
+* **_Lote_**: Porcentagem do volume decidido pelo usuário a ser vendido/tokenizado dentro do volume total estimado e permitido pela FTK . 
 
-4. Compile o arquivo COPF.sol e faça o deploy na testnet do remix.
-5. Use as funções na seguinte orderm:
-<ol>
-<ul> 5.1: `Deploy()`: It deploys the contract and all the information given in the constructor is then associated with assetId = 0. </ul>
-<ul> 5.2: `setAssetValuation()`:  It sets the asset (lote) valuation by the (MINTER_ROLE) = FTK. </ul>
-<ul> 5.3: `setAssetAvailabilityForTransfer()`: It sets the asset availability to true for assetId = 0.
-This function is here because the tokenizator will need to make an asset available to negotiations, but by default the assets are in the `Indisponível` state </ul>
-![hml](https://user-images.githubusercontent.com/79999985/217090843-36b91f8a-4746-44dd-914a-63bdc62974ce.png)
-<ul> 5.4: `transferAsset()`: to transfer assetId = 0 to another account so that the *tokenOwner* can change. </ul>
-<ul> 5.5: `assets()`: to view asset information for assetId = 0. </ul>
-</ol>
+## Exemplo Prático:
+Suponha que a floresta tem 2 talhões, e a porcentagem do volume total de 2 talhões a ser tokenizada é 25%, e essa porcentagem foi decidida pela FTK (A FTK estipula a % a ser disponível para tokenização de acordo com alguns fatores, por exemplo, idade do plantio). O proprietário florestal, no entanto, decidiu tokenizar apenas 10% desssa floresta (primeiro lote). Imagine então que a figura abaixo representa o que o proprietário decidiu tokenizar. Dessa forma, no mesmo ano, o proprietário da floresta poderá, por exemplo, optar por tokenizar mais 15%, sendo esses 15% outro lote. Então cada um dos lotes será uma NFT. (Localização) O talhão é importante para que assegure que o material (madeira) a ser recolhida não seja de uma área diferente/qualidade inferior. Caso os dois talhões sejam homogêneos entre si, o proprietário poderá tokenizar um lote que pertença simultaneamente aos dois talhões. Caso os dois talhões sejam heterogêneos entre si,  o proprietário o lote fará então, **_necessariamente_**, parte de apenas um dos talhões.
 
-# OBS:
-Nesse contexto, o termo asset se refere a um *lote* de uma fazenda, não à fazenda completa. Logo, *asset = lote*.
-Cada tokenId mintado no contrato representa então um lote diferente da fazenda.
-**MINTER_ROLE** is the FTK company. Assim como na goTokens, o responsável pelas txs será a conta da company. 
+Cada _struct_ Talhão e cada NFT, por si só, terão suas informações próprias: 
+* proprietário
+* idade de plantio
+* tipo de madeira
+* data de plantio
+* ano de corte
+* localização -> A localização do lote é uma localização que pode, ou não, coincidir com uma localização que está no array de localização dos talhões. A localização do lote refere-se exclusivamente às coordenadas da parte TOKENIZADA - e não à parte passível de tokenização.
+* detentor atual do da NFT - não faz sentido ter dono atual do talhão, pois sempre será do proprietário, a menos que seja uma TPF cujo lote seja um talhão completo.
+* valor de venda - (vem da plataforma)
+* porcentagem tokenizada (em relação ao total liberado para a floresta)
+* imagem do talhão e da NFT.
+* tipo de tokenização da NFT: TPR ou TPFF 
 
-# REQUISITOS COPF:
-```
-Armazenar AssetType {PINUS, EUCALIPTO}
-Armazenar AssetClassification {GREENFIELD, BROWNFIELD}
-Função para settar o asset VALUATION
-Proprietário e Detentor do asset são armazenados no COPF
-Só quem tokenizou inicialmente o ativo (proprietário) pode fazer o burn
-```
+No entanto, algumas informações ficarão armazenadas a nível de contrato:
 
-De acordo com o exame da plataforma e consulta ao Allan, John e Rodolfo, algumas definições:
-O que será negociado na plataforma será um lote de uma floresta, não a floresta inteira.
-A floresta inteira será negociada como um todo apenas se a mesma não tiver nenhum lote e for, por si só, o único lote.
-O worket pode ser futuramente adaptado ao projeto a fim de executar a transação de transferência de uma NFT quando um evento for emitido pela confirmação da transferência em dinheiro feita por TED ou usando a FoxBit.
+* localização[] do/s talhão/ões
+* imagens[] //mesma length do [] de localização
+* Nome da Fazenda
+* Matrícula do Imóvel
+* Quantidade de talhões na floresta
+* porcentagem máxima de tokenização liberada p/ a floresta 
+* link do data room
+* link do contrato de compra e venda
+* link do valuation (estará dentro do link do data room? NÃO ENTENDI)
+* link do contrato de tokenização
+* mapping (string => NFT) garantia; //Cada NFT pode, ou não, ter uma garantia de um imóvel.
+* porcentagem máxima de tokenização = 80000 -> colocar no contrato para evitar erros do backoffice.
 
-Haverá uma struct que armazenará todas as informações necessárias sobre um Lote específico. 
-```
-struct Asset {
-    //It is the florest's owner when tokenization happened
-    address initialOwner;
-    AssetType assetType;
-    uint16 projectStart;
-    uint16 projectEnd;
-    AssetClassification assetClassification;
-    uint32 AssetValuation;
-    bool isCurrentAssetAvailableForTransfer;
-    //It is the current token owner after negotiations have been made
-    address tokenOwner;
-}
-```
+## Localização do Lote
+### Lote constituído de pedaços diferentes de vários talhões 
+Lote = conjunto de %s de n talhões {1,2,...,n} de mesmo ano e mesma espécie (homogêneos).
+NFT = lote. 
 
-![assett](https://user-images.githubusercontent.com/79999985/217091133-5eb9bba7-db3d-41df-9dc1-f0c8364cfd4c.png)
+### Lote constituído de pedaço de um único talhão
+Lote = % de um talhão que é integralmente do mesmo ano e mesma espécie (homogêneo).
 
-O dono da floresta definirá quantos talhões a floresta terá e o máximo será de 255 talhões. **(Deve ser ajustado?)**
-<! --- Quantidade de talhões a serem mintados -->
-Uint8 public assetId = 0;
+### _Regra_: 
+Talhões heterogêneos sempre farão parte de lotes diferentes.
+#### Exemplos da regra acima:
+Na imagem abaixo, os dois talhões devem ser obrigatoriamente **homogêneos** para que a área vermelha seja um lote só.
 
-Os assets individuais poderão ter suas informaçõs acessadas por meio do mapping público entre um tokenId e seu asset do tipo Asset.
-![assets](https://user-images.githubusercontent.com/79999985/216135099-fc5c3be5-fc71-497e-99f0-e933a3cabd44.png)
+Na imagem abaixo, a localização do lote poderá pertencer apenas ao talhão 1 **ou** 2, pois os talhões são heterogêneos quanto à idade e espécie.
 
-O dono inicial da floresta será armazenado, mesmo que ela tenha várias transferências em seu ciclo de vida. O dono será armazenado no constructor a fim de que ele seja autorizado a queimar a floresta futuramente. **(A ser definido como isso exatamente funcionará.)**
+### Estrutura do Talhão
+* Coordenadas geográficas do talhão
+* Potencial total do talhão
+* Tipo de madeira
+* Idade do talhão (MM/YYYY)
+* Ano de Plantio
+* Ano de Corte
 
-Cada lote terá um número associado a ele p/ diferenciá-lo
-*Cada Asset é um lote da floresta.* Não existirá informações sobre a floresta inteira, APENAS se a mesma for o único lote disponível.
+### Regras de Negócio:
+Volume máximo tokenizado pode ser até 80% do volume total estimado pela FTK.
+
+## Regra universal
+
+- Volume máximo tokenizado = 80% do volume total de floresta (soma dos talhões) estimado pela FTK.
+
+## Regras complementares
+
+- É definido pela FTK o volume a ser tokenizado AGORA.
+    - Não pode ser superior ao volume máximo tokenizado e vai ser atrelado à idade do plantio
+- Máximo de tokenização por idade:
+
+| Ano | Idade |
+| ------ | ------ |
+| Ano 1  | 30% |
+| Ano 2 | 40% |
+| Ano 3 | 50% |
+| Ano 4 | 60% |
+| Ano 5 | 70% |
+| Ano 6 e 7 | 80% |
+ Exemplo:
+ Usuário tokenizou 30% da sua floresta no Ano1! No ano 2, ele poderá tokenizar apenas mais 10%, no máximo.
+        
+- Para o marketplace, é necessária a existência de um filtro que limite a capacidade do usuário de expôr seu asset; (NÃO ENTENDI)
+- Valor de venda será determinado pelo próprio detentor do token no momento da transação;
+- 3% do valor de venda deve ser transferido para a ForesToken para que a plataforma monetize em cima das transações.
+
+- Dados necessários:
+    - Dados do comprador;
+    - Dados do proprietário;
+    - Valor de venda;
+    - Localização do talhão ou de múltiplos talhões;
+    - Volume;
+    - Matrícula do imóvel;
+    - Data de plantio (MM/YYYY);
+    - Data de corte (MM/YYYY);
+    - Link do contrato de compra e venda;
+    - Link do contrato de tokenização;
+    - Link do dataroom;
+    - Link do valuation;
+
+### Necessidade da plataforma
+
+- API quem será responsável por se conectar com um banco, gerando uma conta que cuidará do fluxo monetário.
 
 
 
-No constructor, as características do asset são informadas, assim como o *minter* para a ROLE: **MINTER_ROLE**, a baseURI dos lotes, assim como o tokenURI do primeiro asset de id = 0. 
-
-Cada floresta será um único contrato ERC721 sendo única por ter um endereço único na Ethereum/Polygon. Cada talhão será único ao ser um id único de uma NFT dentro de um 721 único.
-
-# Vulnerabilidades
-**No issues found** quando usado o KARL
-![karl](https://user-images.githubusercontent.com/79999985/217381032-0ea01148-bd8d-4c39-91e8-8c16f8453c0f.png)
-
-
-# Breaking Changes 
-Definir se o ERC20 ficará em um arquivo separado ou serão dois contratos nesse mesmo arquivo .sol?
-Agora existe a variável ```maxAssetsQuantity``` que é definida logo na criação do contrato e define o máximo de lotes que podem ser mintados pelo contrato. Foi adicionado também a validação na função `mint` em relação à quantidade de lotes disponíveis para mint. 
-Foi trocado a interface do contrato, sendo utilizada a versão ERC1155 que permite a existência de múltiplas cópias de uma mesma NFT/lote. Dessa forma, um usuário pode possuir múltiplas cópias do mesmo lote - que são as subáreas de um lote conforme definido em reunião. 
-
-Depois que paga a negociação por meio de (TED/Foxbit?) (A Definir), o ativo é transferido por meio do MINTER_ROLE.
-1.1 O ADMIN_ROLE será o *msg.sender* que fará o deploy do contrato na blockchain.
-1. Este contrato já suporta múltiplas transferências do asset para diferentes contas usando a função `transferAsset()`
