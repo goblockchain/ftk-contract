@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 //imports
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../utils/GoTokensRole.sol";
+import "../../utils/GoTokensRole.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 
 //ERC721URIStorage already inherits functions from ERC721
@@ -21,21 +21,45 @@ mapping (uint8 => string) private _tokenURIs;
 
 bool isCurrentAssetAvailableForTransfer = false;
 
-enum AssetType {PINUS, EUCALIPTO}
-AssetType public assetType;
+enum WoodType {PINUS, EUCALIPTO}
+WoodType private assetType;
 
 enum AssetClassification {GREENFIELD, BROWNFIELD}
-AssetClassification public assetClassif;
+AssetClassification private assetClassif;
+
+enum NegociationType {TPR, TPFF}
+NegociationType private dealType; 
 
 struct Asset {
+    string assetImage;
     address initialOwner;
+    uint32 tokenizedPercentage; 
+    //How much of the allowed percentage does this specific asset uses? For example: asset 1 takes 15% of 25% given to the whole COPF.
+    //Numbers are going to be represented as 15% =  15000
     AssetType assetType;
-    uint16 projectStart;
-    uint16 projectEnd;
+    string geographicLocation;
+    WoodType woodTypeForAsset;
+    AssetClassification class;
+    uint16 assetPlantingYear;
+    uint16 assetCutYear;
     AssetClassification assetClassification;
     uint32 AssetValuation;
     bool isCurrentAssetAvailableForTransfer;
-    address tokenOwner;
+    address currentTokenOwner;
+    uint256 soldByValueOf; //it comes from the FTK
+    bytes32 assetAge;
+    NegociationType assetTokenizationType;
+}
+
+struct Plot {
+    string localization;
+    string plotImage;
+    AssetClassification class;
+    WoodType woodTypeForPlot;
+    uint16 plotAge;
+    uint16 plotPlantingYear;
+    uint16 plotCutYear;
+    // Potencial total de m³ de madeira não deveria ficar no escopo do contrato?
 }
 
 //Asset[] public assets;
@@ -99,15 +123,12 @@ constructor(
     uint16 _projectStart, 
     uint16 _projectEnd, 
     uint8 _assetclass,
-    uint16 _currentYear,
     uint256[] memory _ids,
     uint256[] memory _amount
     ) ERC1155("https://game.example/api/item/{id}.json") GoTokensRoles(msg.sender, _minter) {
    maxAssetsQuantity = _maxAssetsQuantity;
 
     assets[assetId] = (Asset(_initialOwner, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), 0, false, _initialOwner));
-
-    currentYear = _currentYear; 
 
     assetId++;
     _mintBatch(_initialOwner, _ids, _amount, "mint");

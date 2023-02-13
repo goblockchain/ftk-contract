@@ -36,30 +36,30 @@ Cada _struct_ Talhão e cada NFT, por si só, terão suas informações própria
 Talhão:
 | Struct | Propriedade |
 | ------ | ------ |
-|  Talhão | Coordenadas geográficas |
-| Talhão | Imagem |
+|  Talhão | Coordenadas geográficas | ☑
+| Talhão | Imagem | ☑
 | Talhão |Potencial total de m³ de madeira|
-|  Talhão| Tipo de madeira|
-| Talhão | Idade do talhão|
-| Talhão | Ano de Plantio |
-| Talhão | Ano de Corte| 
-| Talhão | Greenfield/Brownfield|
+|  Talhão| Tipo de madeira| ☑
+| Talhão | Idade do talhão| ☑
+| Talhão | Ano de Plantio | ☑
+| Talhão | Ano de Corte| ☑
+| Talhão | Greenfield/Brownfield| ☑
 
 Lote/NFT:
-| Struct | Propriedade |
+| Struct | Propriedade | 
 | ------ | ------ |
-|  Lote | Coordenadas geográficas |
-| Lote | Imagem |
-| Lote |Porcentagem tokenizada|
-|  Lote | Tipo de madeira|
+|  Lote | Coordenadas geográficas | ☑
+| Lote | Imagem | ☑
+| Lote |Porcentagem tokenizada| ☑
+|  Lote | Tipo de madeira| ☑
 | Lote | Idade do talhão (MM/YYYY) |
-| Lote | Ano de Plantio |
-| Lote | Ano de Corte| 
+| Lote | Ano de Plantio | ☑
+| Lote | Ano de Corte| ☑
 | Lote | Tipo de Tokenização (TPF ou TPFF) |
-| Lote | Valor de venda (vem da FTK) |
-| Lote | Proprietário |
-| Lote | Atual detentor da NFT |
-| Lote | Greenfield/Brownfield|
+| Lote | Valor de venda (vem da FTK) | ☑
+| Lote | Proprietário | ☑
+| Lote | Atual detentor da NFT | ☑
+| Lote | Greenfield/Brownfield| ☑
 
 ## Localização do Lote
 ### Lote constituído de pedaços diferentes de vários talhões 
