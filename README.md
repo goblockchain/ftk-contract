@@ -1,23 +1,23 @@
 # COPF
 ## _Dados Armazenados no Contrato_
 Váriaveis Globais do Smart Contract 
-| Nível | Variável | Type |
-| ------ | ------ | ------ | 
-| Smart Contract | localizações dos talhões | Array |
-| Smart Contract | Imagens | Array |
-| Smart Contract |Potencial total de m³ de madeira| Number |
-| Smart Contract | Tipo de madeira| Enum |
-| Smart Contract | Idade do talhão| Dates |
-| Smart Contract | Ano de Plantio | Dates |
-| Smart Contract | Ano de Corte| Dates |
-| Smart Contract | % Máxima de Tokenização Universal | Number = 80% |
-| Smart Contract | Nome da Floresta | Texto |
-| Smart Contract | Matrícula do Imóvel | Texto |
-| Smart Contract | Quantidade de talhões na floresta | Number |
-| Smart Contract | % máxima de tokenização liberada p/ a floresta | Number |
-| Smart Contract | link do data room | Texto |
-| Smart Contract | link do contrato de compra e venda | Texto |
-| Smart Contract | link do contrato de tokenização | Texto |
+| Nível | Variável | Type | Done |
+| ------ | ------ | ------ | ------ | 
+| Smart Contract | localizações dos talhões | Array | ☑ |
+| Smart Contract | Imagens | Array | ☑ |
+| Smart Contract |Potencial total de m³ de madeira| Number | ☑ |
+| Smart Contract | Tipo de madeira| Enum | ☑ |
+| Smart Contract | Idade do talhão| Dates | ☑ |
+| Smart Contract | Ano de Plantio | Dates | ☑ |
+| Smart Contract | Ano de Corte| Dates | ☑ |
+| Smart Contract | % Máxima de Tokenização Universal | Number = 80% | ☑ |
+| Smart Contract | Nome da Floresta | Texto | ☑ |
+| Smart Contract | Matrícula do Imóvel | Texto | ☑ |
+| Smart Contract | Quantidade de talhões na floresta | Number | ☑ |
+| Smart Contract | % máxima de tokenização liberada p/ a floresta | Number | ☑ |
+| Smart Contract | link do data room | Texto | ☑ |
+| Smart Contract | link do contrato de compra e venda | Texto | ☑ |
+| Smart Contract | link do contrato de tokenização | Texto | ☑ |
 
 ## Regras de Tokenização:
 * _(1)_ Quantidade potencial de m³ de madeira (Decidido pela FTK). 
@@ -34,16 +34,16 @@ Suponha que a floresta tem 2 talhões, e a porcentagem do volume total de 2 talh
 
 Cada _struct_ Talhão e cada NFT, por si só, terão suas informações próprias: 
 Talhão:
-| Struct | Propriedade |
-| ------ | ------ |
-|  Talhão | Coordenadas geográficas | ☑
-| Talhão | Imagem | ☑
+| Struct | Propriedade | Done |
+| ------ | ------ | ------ |
+|  Talhão | Coordenadas geográficas | ☑ |
+| Talhão | Imagem | ☑ |
 | Talhão |Potencial total de m³ de madeira|
-|  Talhão| Tipo de madeira| ☑
-| Talhão | Idade do talhão| ☑
-| Talhão | Ano de Plantio | ☑
-| Talhão | Ano de Corte| ☑
-| Talhão | Greenfield/Brownfield| ☑
+|  Talhão| Tipo de madeira| ☑ |
+| Talhão | Idade do talhão| ☑ |
+| Talhão | Ano de Plantio | ☑ |
+| Talhão | Ano de Corte| ☑ |
+| Talhão | Greenfield/Brownfield| ☑ |
 
 Lote/NFT:
 | Struct | Propriedade | Done
@@ -52,7 +52,7 @@ Lote/NFT:
 | Lote | Imagem | ☑ |
 | Lote |Porcentagem tokenizada| ☑ |
 |  Lote | Tipo de madeira| ☑ |
-| Lote | Idade do talhão (MM/YYYY) | |
+| Lote | Idade do lote (MM/YYYY) | |
 | Lote | Ano de Plantio | ☑ |
 | Lote | Ano de Corte| ☑ |
 | Lote | Tipo de Tokenização (TPF ou TPFF) | |

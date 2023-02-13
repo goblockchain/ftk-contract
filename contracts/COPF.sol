@@ -4,12 +4,26 @@ pragma solidity ^0.8.0;
 //imports
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../../utils/GoTokensRole.sol";
+import "../utils/GoTokensRole.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 
 //ERC721URIStorage already inherits functions from ERC721
 contract COPF is Ownable, GoTokensRoles, ERC1155, ERC1155Burnable {
 
+//ESCOPO GLOBAL = FLORESTA.
+
+string[] public plotsLocalization;
+string[] public plotsImages;
+uint32 public woodFlorestMaxPotential;
+uint32 public maxAllowedFlorestTokenizationPercentage = 80000; //it represents 80% => 80/100 = (for simplicity) 80000
+//create set functions for the following variables;
+uint32 public woodFlorestMaxPotential;
+string public florestName;
+uint16 public plotsQuantityInCurrentFlorest;
+uint32 public maxTokenizationGivenToFlorest;
+string public dataRoomLink;
+string public buyOrSellContractLink;
+string public tokenizationContractLink;
 
 //Keeps track of which asset of the florest is currently being minted
 //max value of above declared florestValuation = 4.294.967.295 = 4 bilhões, 294 milhões, etc.
@@ -31,24 +45,23 @@ enum NegociationType {TPR, TPFF}
 NegociationType private dealType; 
 
 struct Asset {
+    string geographicLocation;
     string assetImage;
-    address initialOwner;
     uint32 tokenizedPercentage; 
     //How much of the allowed percentage does this specific asset uses? For example: asset 1 takes 15% of 25% given to the whole COPF.
     //Numbers are going to be represented as 15% =  15000
-    AssetType assetType;
-    string geographicLocation;
     WoodType woodTypeForAsset;
-    AssetClassification class;
+    bytes32 assetAge;
     uint16 assetPlantingYear;
     uint16 assetCutYear;
-    AssetClassification assetClassification;
-    uint32 AssetValuation;
-    bool isCurrentAssetAvailableForTransfer;
-    address currentTokenOwner;
-    uint256 soldByValueOf; //it comes from the FTK
-    bytes32 assetAge;
     NegociationType assetTokenizationType;
+    uint256 soldByTheValueOf; //it comes from the FTK
+    address initialOwner;
+    address currentTokenOwner;
+    AssetClassification class;
+    uint32 AssetValuation;
+    //AssetValuation: Is it needed here?
+    bool isCurrentAssetAvailableForTransfer;
 }
 
 struct Plot {
@@ -135,6 +148,28 @@ constructor(
     setApprovalToTransferAssets(_initialOwner, msg.sender, true);
 
 }
+
+    /*╔══════════════════════════════╗
+      ║       SET FUNCTIONS          ║
+      ╚══════════════════════════════╝*/
+function setGlobalInfoAboutCurrentFlorest(
+    uint32 _woodFlorestMaxPotential,
+    string _florestName,
+    uint16 _plotsQuantityInCurrentFlorest,
+    uint32 _maxTokenizationGivenToFlorest,
+    string _dataRoomLink,
+    string _buyOrSellContractLink,
+    string _tokenizationContractLink  
+) external onlyOwner {
+    woodFlorestMaxPotential = _woodFlorestMaxPotential;
+    florestName = _florestName;
+    plotsQuantityInCurrentFlorest = _plotsQuantityInCurrentFlorest;
+    maxTokenizationGivenToFlorest = _maxTokenizationGivenToFlorest;
+    dataRoomLink = _dataRoomLink;
+    buyOrSellContractLink = _buyOrSellContractLink;
+    tokenizationContractLink = _tokenizationContractLink;
+}
+
     /*╔══════════════════════════════╗
       ║     CHECK FUNCTIONS          ║
       ╚══════════════════════════════╝*/
