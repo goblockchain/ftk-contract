@@ -12,12 +12,25 @@ Váriaveis Globais do Smart Contract
 | Smart Contract | Ano de Corte| Dates | ☑ |
 | Smart Contract | % Máxima de Tokenização Universal | Number = 80% | ☑ |
 | Smart Contract | Nome da Floresta | Texto | ☑ |
-| Smart Contract | Matrícula do Imóvel | Texto | ☑ |
+| Smart Contract | Matrícula do Imóvel | Número | ☑ |
 | Smart Contract | Quantidade de talhões na floresta | Number | ☑ |
 | Smart Contract | % máxima de tokenização liberada p/ a floresta | Number | ☑ |
 | Smart Contract | link do data room | Texto | ☑ |
 | Smart Contract | link do contrato de compra e venda | Texto | ☑ |
 | Smart Contract | link do contrato de tokenização | Texto | ☑ |
+| Smart Contract |  | Bijeção | ☑ |
+
+## Funções do Smart Contract:
+O smart contract representa a floresta e as estruturas de Lote e Talhão ficam dentro da floresta:
+
+Aqui segue a descrição técnica do que algumas funçoes do smart contract farão:
+
+| Nome da Função | Descrição | Visibilidade | Done |
+| ------ | ------ | ------ | ------ |
+| setGlobalInfoAboutCurrentFlorest | Define propriedades da floresta | onlyOwner |  |
+| setAssetAvailabilityForTransfer | Torna o ativo disponível para transfer | onlyOwner | |
+| mint | Cria um lote = NFT | onlyOwner | |
+
 
 ## Regras de Tokenização:
 * _(1)_ Quantidade potencial de m³ de madeira (Decidido pela FTK). 
@@ -28,9 +41,30 @@ Váriaveis Globais do Smart Contract
 * **_Data Room_**: Link que contém informações sobre a floresta como, por exemplo, documentação do due diligence, matrícula, documentação do proprietário. O data room é usado pela FTK e comprador para acompanhar se a floresta está crescendo.
 * **_Talhão_**: Área com potencial de ser tokenizada dentro de uma floresta e é sempre homogênea em relação à sua idade e em relação à espécie contida nela.
 * **_Lote_**: Porcentagem do volume decidido pelo usuário a ser vendido/tokenizado dentro do volume total estimado e permitido pela FTK . 
+* **_Floresta_**: Agrupamento de talhões! Dessa forma, uma propriedade pode ter várias florestas, pois a floresta não é uma propriedade, mas sim um agrupamento de talhões de mesmo ano de plantio e espécie.
 
 ## Exemplo Prático:
-Suponha que a floresta tem 2 talhões, e a porcentagem do volume total de 2 talhões a ser tokenizada é 25%, e essa porcentagem foi decidida pela FTK (A FTK estipula a % a ser disponível para tokenização de acordo com alguns fatores, por exemplo, idade do plantio). O proprietário florestal, no entanto, decidiu tokenizar apenas 10% desssa floresta (primeiro lote). Imagine então que a figura abaixo representa o que o proprietário decidiu tokenizar. Dessa forma, no mesmo ano, o proprietário da floresta poderá, por exemplo, optar por tokenizar mais 15%, sendo esses 15% outro lote. Então cada um dos lotes será uma NFT. (Localização) O talhão é importante para que assegure que o material (madeira) a ser recolhida não seja de uma área diferente/qualidade inferior. Caso os dois talhões sejam homogêneos entre si, o proprietário poderá tokenizar um lote que pertença simultaneamente aos dois talhões. Caso os dois talhões sejam heterogêneos entre si,  o proprietário o lote fará então, **_necessariamente_**, parte de apenas um dos talhões.
+Exemplo:
+Vamos supor que eu tenho uma matrícula que corresponde a minha propriedade. A minha propriedade contém 10 talhões de acordo com a análise da FTK. (Floresta 1)  5 talhões são todos de 2021 e são todos de mesma espécie: Pinus. (Floresta 2)  Os outros 5 talhões são do ano de 2023  e são de mesma espécie: Eucalipto.
+Devido a alguns fatores, a FTK me permitiu tokenizar até 40% da floresta 1. Decidi tokenizar 30% desse total liberado. Esse será meu primeiro Lote.
+Para a floresta 2 de talhões, a FTK me liberou 25%. Decidi tokenizar 10% desse agrupamento. Esse é meu segundo Lote.
+
+Primeira Rodada:
+1° Floresta = 40% liberado ✓
+2° Floresta = 25% liberado ✓ 
+
+Ano que vem, decidi começar outra rodada de tokenizacão. A FTK me liberou 20% a mais em cada floresta. Dessa forma, no primeira floresta, terei 60% liberado para tokenizacão e, para a segunda floresta, 45% liberado para tokenização.
+
+Ano 2:
+1° Floresta = 20% liberado ✓
+2° Floresta = 20% liberado ✓
+ 
+Numa terceira rodada de tokenizacão, a FTK
+liberou mais 25% de tokenizacão para a primeira floresta. 🟥 Opa, mas isso é IMPOSSÍVEL, pois eu já estaria, no total, tokenizando 85% da minha primeira floresta (40+20+25= 85%). Para a segunda floresta, foi liberado também 25%, o que faz com que o segundo talhão tenha 45+25=70%, no total, liberado para tokenização.
+
+Ano 3:
+1° Floresta = 25% liberado ✓  🟥  (Impossível)
+2° Floresta = 25% liberado ✓
 
 Cada _struct_ Talhão e cada NFT, por si só, terão suas informações próprias: 
 Talhão:

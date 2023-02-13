@@ -16,6 +16,7 @@ string[] public plotsLocalization;
 string[] public plotsImages;
 uint32 public woodFlorestMaxPotential;
 uint32 public maxAllowedFlorestTokenizationPercentage = 80000; //it represents 80% => 80/100 = (for simplicity) 80000
+uint256 public florestRegistration; //matrícula
 //create set functions for the following variables;
 uint32 public woodFlorestMaxPotential;
 string public florestName;
@@ -27,7 +28,6 @@ string public tokenizationContractLink;
 
 //Keeps track of which asset of the florest is currently being minted
 //max value of above declared florestValuation = 4.294.967.295 = 4 bilhões, 294 milhões, etc.
-uint8 public maxAssetsQuantity;
 uint8 public assetId = 1;
 uint16 public currentYear = 2023;
 
@@ -45,11 +45,11 @@ enum NegociationType {TPR, TPFF}
 NegociationType private dealType; 
 
 struct Asset {
-    string geographicLocation;
-    string assetImage;
-    uint32 tokenizedPercentage; 
     //How much of the allowed percentage does this specific asset uses? For example: asset 1 takes 15% of 25% given to the whole COPF.
     //Numbers are going to be represented as 15% =  15000
+    uint32 tokenizedPercentage; 
+    string geographicLocation;
+    string assetImage;
     WoodType woodTypeForAsset;
     bytes32 assetAge;
     uint16 assetPlantingYear;
@@ -60,8 +60,8 @@ struct Asset {
     address currentTokenOwner;
     AssetClassification class;
     uint32 AssetValuation;
-    //AssetValuation: Is it needed here?
     bool isCurrentAssetAvailableForTransfer;
+    string florestRegistration;
 }
 
 struct Plot {
@@ -75,8 +75,9 @@ struct Plot {
     // Potencial total de m³ de madeira não deveria ficar no escopo do contrato?
 }
 
-//Asset[] public assets;
 mapping(uint8 => Asset) public assets;
+mapping(uint8 => Plot) public plots;
+
 
     /*╔═════════════════════════════╗
       ║           EVENTS            ║
@@ -155,14 +156,18 @@ constructor(
 function setGlobalInfoAboutCurrentFlorest(
     uint32 _woodFlorestMaxPotential,
     string _florestName,
+    string _florestRegistration,
     uint16 _plotsQuantityInCurrentFlorest,
     uint32 _maxTokenizationGivenToFlorest,
     string _dataRoomLink,
     string _buyOrSellContractLink,
     string _tokenizationContractLink  
 ) external onlyOwner {
+    //checks if maxTokenizationGivenToFlorest isn't greater than 80000 = 80%
+    require(_maxTokenizationGivenToFlorest <= 80000, "This florest can't infringe the universal rule");
     woodFlorestMaxPotential = _woodFlorestMaxPotential;
     florestName = _florestName;
+    florestRegistration = _florestRegistration;
     plotsQuantityInCurrentFlorest = _plotsQuantityInCurrentFlorest;
     maxTokenizationGivenToFlorest = _maxTokenizationGivenToFlorest;
     dataRoomLink = _dataRoomLink;
@@ -203,7 +208,24 @@ function setAssetAvailabilityForTransfer(uint8 _assetId, bool _availability) ext
 }
 
 // make the function available for future mints of other asset in the same florest 
-function mint(address _initialOwner, AssetType _assetType, uint16 _projectStart, uint16 _projectEnd, AssetClassification _assetclass, uint32 _assetValuation, uint256[] calldata ids, uint256[] calldata amounts)
+function mint(
+    _tokenizedPercentage,
+    _geographicLocation,
+    _assetImage,
+    _woodTypeForAsset,
+    _assetAge,
+    _assetPlantingYear,
+    _assetCutYear,
+    _assetTokenizationType,
+    _soldByTheValueOf,
+    _initialOwner,
+    _currentTokenOwner,
+    _class,
+    _AssetValuation,
+    _isCurrentAssetAvailableForTransfer,
+    uint256[] calldata ids, 
+    uint256[] calldata amounts
+    )
  onlyRole(MINTER_ROLE) 
  external {
     uint8 _assetId = assetId++;
@@ -211,6 +233,7 @@ function mint(address _initialOwner, AssetType _assetType, uint16 _projectStart,
     
     assets[_assetId] = (Asset(_initialOwner, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), _assetValuation, false, _initialOwner));
 
+    //
     _mintBatch(_initialOwner, ids, amounts, "minting");
     
     setApprovalToTransferAssets(_initialOwner, msg.sender, true);
