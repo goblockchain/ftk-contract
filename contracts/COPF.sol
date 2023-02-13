@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 //imports
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../../utils/GoTokensRole.sol";
+import "../utils/GoTokensRole.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 
 //ERC721URIStorage already inherits functions from ERC721
@@ -18,7 +18,6 @@ uint8 public assetId = 1;
 uint16 public currentYear = 2023;
 
 mapping (uint8 => string) private _tokenURIs;
-string private _baseURIextended;
 
 bool isCurrentAssetAvailableForTransfer = false;
 
@@ -29,16 +28,13 @@ enum AssetClassification {GREENFIELD, BROWNFIELD}
 AssetClassification public assetClassif;
 
 struct Asset {
-    //It is the florest's owner when tokenization happened
     address initialOwner;
     AssetType assetType;
     uint16 projectStart;
     uint16 projectEnd;
     AssetClassification assetClassification;
     uint32 AssetValuation;
-    //uint32 FlorestValuation;
     bool isCurrentAssetAvailableForTransfer;
-    //It is the current token owner after deals have been made
     address tokenOwner;
 }
 
@@ -103,12 +99,15 @@ constructor(
     uint16 _projectStart, 
     uint16 _projectEnd, 
     uint8 _assetclass,
+    uint16 _currentYear,
     uint256[] memory _ids,
     uint256[] memory _amount
     ) ERC1155("https://game.example/api/item/{id}.json") GoTokensRoles(msg.sender, _minter) {
    maxAssetsQuantity = _maxAssetsQuantity;
 
     assets[assetId] = (Asset(_initialOwner, AssetType(_assetType), _projectStart, _projectEnd, AssetClassification(_assetclass), 0, false, _initialOwner));
+
+    currentYear = _currentYear; 
 
     assetId++;
     _mintBatch(_initialOwner, _ids, _amount, "mint");
