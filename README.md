@@ -17,7 +17,7 @@ Váriaveis Globais do Smart Contract
 | Smart Contract | % máxima de tokenização liberada p/ a floresta | Number | ☑ | ☑ |
 | Smart Contract | link do data room | Texto | ☑ | ❌ |
 | Smart Contract | link do contrato de compra e venda | Texto | ☑ | ☑ |
-| Smart Contract | link do contrato de tokenização | Texto | ☑ | |
+| Smart Contract | link do contrato de tokenização | Texto | ☑ | ☑ |
 
 ## Funções do Smart Contract:
 O smart contract representa a propriedade e as estruturas de Lote, Floresta e Talhão ficam dentro da floresta:
