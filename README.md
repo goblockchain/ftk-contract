@@ -1,35 +1,35 @@
 # COPF
 ## _Dados Armazenados no Contrato_
 Váriaveis Globais do Smart Contract 
-| Nível | Variável | Type | Done |
-| ------ | ------ | ------ | ------ | 
-| Smart Contract | localizações dos talhões | Array | ☑ |
-| Smart Contract | Imagens | Array | ☑ |
-| Smart Contract |Potencial total de m³ de madeira| Number | ☑ |
-| Smart Contract | Tipo de madeira| Enum | ☑ |
-| Smart Contract | Idade do talhão| Dates | ☑ |
-| Smart Contract | Ano de Plantio | Dates | ☑ |
-| Smart Contract | Ano de Corte| Dates | ☑ |
-| Smart Contract | % Máxima de Tokenização Universal | Number = 80% | ☑ |
-| Smart Contract | Nome da Floresta | Texto | ☑ |
-| Smart Contract | Matrícula do Imóvel | Número | ☑ |
-| Smart Contract | Quantidade de talhões na floresta | Number | ☑ |
-| Smart Contract | % máxima de tokenização liberada p/ a floresta | Number | ☑ |
-| Smart Contract | link do data room | Texto | ☑ |
-| Smart Contract | link do contrato de compra e venda | Texto | ☑ |
-| Smart Contract | link do contrato de tokenização | Texto | ☑ |
-| Smart Contract |  | Bijeção | ☑ |
+| Nível | Variável | Type | Done | On-Chain |
+| ------ | ------ | ------ | ------ | ------ | 
+| Smart Contract | localizações dos talhões | Array | ☑ | ☑ |
+| Smart Contract | Imagens | Array | ☑ | ❌ |
+| Smart Contract |Potencial total de m³ de madeira| Number | ☑ | ❌ |
+| Smart Contract | Tipo de madeira| Enum | ☑ | ☑ |
+| Smart Contract | Idade do talhão| Dates | ☑ | ☑ |
+| Smart Contract | Ano de Plantio | Dates | ☑ | ☑ |
+| Smart Contract | Ano de Corte| Dates | ☑ | ☑ |
+| Smart Contract | % Máxima de Tokenização Universal | Number = 80% | ☑ | ☑ |
+| Smart Contract | Nome da Floresta | Texto | ☑ | ❌ |
+| Smart Contract | Matrícula do Imóvel | Número | ☑ | ☑ |
+| Smart Contract | Quantidade de talhões na floresta | Number | ☑ | ☑ |
+| Smart Contract | % máxima de tokenização liberada p/ a floresta | Number | ☑ | ☑ |
+| Smart Contract | link do data room | Texto | ☑ | ❌ |
+| Smart Contract | link do contrato de compra e venda | Texto | ☑ | ☑ |
+| Smart Contract | link do contrato de tokenização | Texto | ☑ | |
 
 ## Funções do Smart Contract:
-O smart contract representa a floresta e as estruturas de Lote e Talhão ficam dentro da floresta:
+O smart contract representa a propriedade e as estruturas de Lote, Floresta e Talhão ficam dentro da floresta:
 
-Aqui segue a descrição técnica do que algumas funçoes do smart contract farão:
+Aqui segue a descrição técnica do que algumas funções do smart contract farão:
+
 
 | Nome da Função | Descrição | Visibilidade | Done |
 | ------ | ------ | ------ | ------ |
 | setGlobalInfoAboutCurrentFlorest | Define propriedades da floresta | onlyOwner |  |
 | setAssetAvailabilityForTransfer | Torna o ativo disponível para transfer | onlyOwner | |
-| mint | Cria um lote = NFT | onlyOwner | |
+| createAsset | Cria um lote = NFT | onlyOwner | |
 
 
 ## Regras de Tokenização:
@@ -44,10 +44,9 @@ Aqui segue a descrição técnica do que algumas funçoes do smart contract far�
 * **_Floresta_**: Agrupamento de talhões! Dessa forma, uma propriedade pode ter várias florestas, pois a floresta não é uma propriedade, mas sim um agrupamento de talhões de mesmo ano de plantio e espécie.
 
 ## Exemplo Prático:
-Exemplo:
 Vamos supor que eu tenho uma matrícula que corresponde a minha propriedade. A minha propriedade contém 10 talhões de acordo com a análise da FTK. (Floresta 1)  5 talhões são todos de 2021 e são todos de mesma espécie: Pinus. (Floresta 2)  Os outros 5 talhões são do ano de 2023  e são de mesma espécie: Eucalipto.
 Devido a alguns fatores, a FTK me permitiu tokenizar até 40% da floresta 1. Decidi tokenizar 30% desse total liberado. Esse será meu primeiro Lote.
-Para a floresta 2 de talhões, a FTK me liberou 25%. Decidi tokenizar 10% desse agrupamento. Esse é meu segundo Lote.
+Para a floresta 2, a FTK me liberou 25%. Decidi tokenizar 10% desse agrupamento. Esse é meu segundo Lote.
 
 Primeira Rodada:
 1° Floresta = 40% liberado ✓
@@ -68,32 +67,32 @@ Ano 3:
 
 Cada _struct_ Talhão e cada NFT, por si só, terão suas informações próprias: 
 Talhão:
-| Struct | Propriedade | Done |
-| ------ | ------ | ------ |
-|  Talhão | Coordenadas geográficas | ☑ |
-| Talhão | Imagem | ☑ |
-| Talhão |Potencial total de m³ de madeira|
-|  Talhão| Tipo de madeira| ☑ |
-| Talhão | Idade do talhão| ☑ |
-| Talhão | Ano de Plantio | ☑ |
-| Talhão | Ano de Corte| ☑ |
-| Talhão | Greenfield/Brownfield| ☑ |
+| Struct | Propriedade | Done | on-Chain |
+| ------ | ------ | ------ | ------ |
+|  Talhão | Coordenadas geográficas | ☑ | ☑ |
+| Talhão | Imagem | ☑ | ❌ |
+| Talhão |Potencial total de m³ de madeira| | ❌ |
+|  Talhão| Tipo de madeira| ☑ | ☑ |
+| Talhão | Idade do talhão| ☑ | ☑ |
+| Talhão | Ano de Plantio | ☑ | ☑ |
+| Talhão | Ano de Corte| ☑ | ☑ |
+| Talhão | Greenfield/Brownfield| ☑ | ☑ |
 
 Lote/NFT:
-| Struct | Propriedade | Done
-| ------ | ------ | ------ |
-|  Lote | Coordenadas geográficas | ☑ |
-| Lote | Imagem | ☑ |
-| Lote |Porcentagem tokenizada| ☑ |
-|  Lote | Tipo de madeira| ☑ |
-| Lote | Idade do lote (MM/YYYY) | |
-| Lote | Ano de Plantio | ☑ |
-| Lote | Ano de Corte| ☑ |
-| Lote | Tipo de Tokenização (TPF ou TPFF) | |
-| Lote | Valor de venda (vem da FTK) | ☑ |
-| Lote | Proprietário | ☑ |
-| Lote | Atual detentor da NFT | ☑ |
-| Lote | Greenfield/Brownfield| ☑ |
+| Struct | Propriedade | Done | on-Chain |
+| ------ | ------ | ------ | ------ |
+|  Lote | Coordenadas geográficas | ☑ | ☑ |
+| Lote | Imagem | ☑ | ❌ |
+| Lote |Porcentagem tokenizada| ☑ | ☑ |
+|  Lote | Tipo de madeira| ☑ | ☑ |
+| Lote | Idade do lote (MM/YYYY) | | ☑ |
+| Lote | Ano de Plantio | ☑ | ☑ |
+| Lote | Ano de Corte| ☑ | ☑ |
+| Lote | Tipo de Tokenização (TPF ou TPFF) | | ☑ |
+| Lote | Valor de venda (vem da FTK) | ☑ | ❌ |
+| Lote | Proprietário | ☑ | ☑ |
+| Lote | Atual detentor da NFT | ☑ | ☑ |
+| Lote | Greenfield/Brownfield| ☑ | ☑ |
 
 ## Localização do Lote
 ### Lote constituído de pedaços diferentes de vários talhões 
@@ -152,7 +151,52 @@ Volume máximo tokenizado pode ser até 80% do volume total estimado pela FTK.
 
 O que significa: "Para o marketplace, é necessária a existência de um filtro que limite a capacidade do usuário de expôr seu asset?"
 Cada NFT terá uma matrícula ou haverá uma matrícula só em relação ao COPF?
+Cada lote terá a informação da matrícula da propriedade?
 O link do Data Room terá o link do valuation ou serão links independentes?
 
+### Notes
+contrato de compra e venda é de cada lote; o data room será sobre a propriedade e o contrato de tokenizaçao sera da propriedade (todas as florestas que ela contem)
+o contrato de compra e venda é do lote que foi comprado
 
+Make florest mapping start at 1;
+function Tokenização feita por florest
+function Tokenização feita por proprietário
 
+One function to:
+set the tokenizationType
+function to set the value by which asset was sold
+setter of currentOwner of asset
+getter for an asset inside a florest
+
+How to encode arguments in a struct call:
+To create an asset, for example:
+[coordenadas, url, 2021, 2028, link, 133,"0x5B38Da6a701c568545dCfcB03FcB875f56beddC4", "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4",165,false,"link"]
+
+struct Florest {
+    Plot[] plotsInFlorest;
+    //string[] plotsLocalization;
+    //string[] plotsImages;
+    uint32 woodFlorestMaxPotential;
+    uint32 tokenizedPercentage; 
+    string florestName;
+    uint16 plotsQuantityInCurrentFlorest;
+    uint32 TokenizationPercentageGivenToFlorest;
+}
+
+struct Plot {
+    string localization;
+    string plotImage;
+    AssetClassification class;
+    WoodType woodTypeForPlot;
+    uint16 plotAge;
+    uint16 plotPlantingYear;
+    uint16 plotCutYear;
+}
+
+    mapping (uint => Campaign) campaigns;
+
+    function newCampaign(address payable beneficiary, uint goal) public returns (uint campaignID) {
+        campaignID = numCampaigns++; // campaignID is return variable
+        Campaign storage c = campaigns[campaignID];
+        c.beneficiary = beneficiary;
+        c.fundingGoal = goal;

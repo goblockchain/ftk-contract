@@ -10,58 +10,39 @@ import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 //ERC721URIStorage already inherits functions from ERC721
 contract COPF is Ownable, GoTokensRoles, ERC1155, ERC1155Burnable {
 
-//ESCOPO GLOBAL = FLORESTA.
+//ESCOPO GLOBAL = PROPRIEDADE
 
-string[] public plotsLocalization;
-string[] public plotsImages;
-uint32 public woodFlorestMaxPotential;
-uint32 public maxAllowedFlorestTokenizationPercentage = 80000; //it represents 80% => 80/100 = (for simplicity) 80000
-uint256 public florestRegistration; //matrícula
-//create set functions for the following variables;
-uint32 public woodFlorestMaxPotential;
-string public florestName;
-uint16 public plotsQuantityInCurrentFlorest;
-uint32 public maxTokenizationGivenToFlorest;
+uint256 public propertyRegistration; //matrícula
+string public propertyName;
+uint32 public woodPotentialForCurrentProperty;
 string public dataRoomLink;
-string public buyOrSellContractLink;
 string public tokenizationContractLink;
-
-//Keeps track of which asset of the florest is currently being minted
-//max value of above declared florestValuation = 4.294.967.295 = 4 bilhões, 294 milhões, etc.
+uint16 public florestsQuantity;
+mapping(uint16 => Florest) florests;
 uint8 public assetId = 1;
+uint8 florestId = 1;
 uint16 public currentYear = 2023;
 
-mapping (uint8 => string) private _tokenURIs;
+//mapping (uint8 => string) private _tokenURIs;
 
 bool isCurrentAssetAvailableForTransfer = false;
 
 enum WoodType {PINUS, EUCALIPTO}
-WoodType private assetType;
 
 enum AssetClassification {GREENFIELD, BROWNFIELD}
-AssetClassification private assetClassif;
 
 enum NegociationType {TPR, TPFF}
-NegociationType private dealType; 
 
-struct Asset {
-    //How much of the allowed percentage does this specific asset uses? For example: asset 1 takes 15% of 25% given to the whole COPF.
-    //Numbers are going to be represented as 15% =  15000
+uint32 public maxGlobalAllowedFlorestTokenizationPercentage = 80000; //it represents 80% => 80/100 = (for simplicity) 80000
+struct Florest {
+    Plot[] plotsInFlorest;
+    //string[] plotsLocalization;
+    //string[] plotsImages;
+    uint32 woodFlorestMaxPotential;
     uint32 tokenizedPercentage; 
-    string geographicLocation;
-    string assetImage;
-    WoodType woodTypeForAsset;
-    bytes32 assetAge;
-    uint16 assetPlantingYear;
-    uint16 assetCutYear;
-    NegociationType assetTokenizationType;
-    uint256 soldByTheValueOf; //it comes from the FTK
-    address initialOwner;
-    address currentTokenOwner;
-    AssetClassification class;
-    uint32 AssetValuation;
-    bool isCurrentAssetAvailableForTransfer;
-    string florestRegistration;
+    string florestName;
+    uint16 plotsQuantityInCurrentFlorest;
+    uint32 tokenizationPercentageGivenToFlorest;
 }
 
 struct Plot {
@@ -72,8 +53,28 @@ struct Plot {
     uint16 plotAge;
     uint16 plotPlantingYear;
     uint16 plotCutYear;
-    // Potencial total de m³ de madeira não deveria ficar no escopo do contrato?
 }
+
+struct Asset {
+    //How much of the allowed percentage does this specific asset uses? For example: asset 1 takes 15% of 25% given to the whole COPF.
+    //Numbers are going to be represented as 15% =  15000
+    string geographicLocation;
+    string assetImage;
+    WoodType woodTypeForAsset;
+    bytes32 assetAge;
+    uint16 assetPlantingYear;
+    uint16 assetCutYear;
+    string buyOrSellContractLink;
+    NegociationType assetTokenizationType;
+    uint256 soldByTheValueOf; //it comes from the FTK
+    address initialOwner;
+    address currentTokenOwner;
+    AssetClassification class;
+    uint32 AssetValuation;
+    bool isCurrentAssetAvailableForTransfer;
+    string assetPropertyRegistration;
+}
+
 
 mapping(uint8 => Asset) public assets;
 mapping(uint8 => Plot) public plots;
@@ -150,34 +151,82 @@ constructor(
 
 }
 
+uint32 public woodPropertyMaxPotential;
+
     /*╔══════════════════════════════╗
       ║       SET FUNCTIONS          ║
       ╚══════════════════════════════╝*/
-function setGlobalInfoAboutCurrentFlorest(
-    uint32 _woodFlorestMaxPotential,
-    string _florestName,
-    string _florestRegistration,
-    uint16 _plotsQuantityInCurrentFlorest,
-    uint32 _maxTokenizationGivenToFlorest,
+function setGlobalInfoAboutCurrentProperty(
+    uint32 _woodPotentialForCurrentProperty,
+    string _propertyName,
+    uint16 _florestsQuantity,
+    string _propertyRegistration,
     string _dataRoomLink,
-    string _buyOrSellContractLink,
     string _tokenizationContractLink  
 ) external onlyOwner {
     //checks if maxTokenizationGivenToFlorest isn't greater than 80000 = 80%
-    require(_maxTokenizationGivenToFlorest <= 80000, "This florest can't infringe the universal rule");
-    woodFlorestMaxPotential = _woodFlorestMaxPotential;
-    florestName = _florestName;
-    florestRegistration = _florestRegistration;
-    plotsQuantityInCurrentFlorest = _plotsQuantityInCurrentFlorest;
-    maxTokenizationGivenToFlorest = _maxTokenizationGivenToFlorest;
-    dataRoomLink = _dataRoomLink;
-    buyOrSellContractLink = _buyOrSellContractLink;
+    woodPotentialForCurrentProperty = _woodPotentialForCurrentProperty;
+    florestsQuantity = _florestsQuantity;
+    propertyName = _propertyName;
+    propertyRegistration = _propertyRegistration;
     tokenizationContractLink = _tokenizationContractLink;
+    dataRoomLink = _dataRoomLink;
 }
 
+function createAFlorest(
+    uint16 _plotsQuantityInCurrentFlorest,
+    uint32 _woodFlorestMaxPotential,
+    uint32 _tokenizationPercentageGivenToFlorest,
+    uint32 _tokenizedPercentage,
+    string _florestName
+) external onlyOwner returns(uint florestID) {
+    require(_tokenizationPercentageGivenToFlorest <= 80000, "This florest can't infringe the universal rule");
+    
+    Florest storage florest = florests[florestId]; 
+    florest.plotsQuantityInCurrentFlorest = _plotsQuantityInCurrentFlorest;
+    florest.tokenizedPercentage = _tokenizedPercentage;
+    florest.florestName = _florestName;
+    florest.tokenizationPercentageGivenToFlorest = _tokenizationPercentageGivenToFlorest;
+
+    florestID = florestId++;
+}
+
+function createAPlot(
+    uint8 _correspondingFlorest,
+    string calldata _localization,
+    string calldata _plotImage,
+    AssetClassification _class,
+    WoodType _woodTypeForPLot,
+    uint16 _plotAge,
+    uint16 _plotPlantingYear,
+    uint16 _plotCutYear
+) external 
+ //onlyOwner 
+{
+    Florest storage correspondingFlorest = florests[_correspondingFlorest];
+    //require(florests[_correspondingFlorest].plotsInFlorest.0)
+    correspondingFlorest.plotsInFlorest.push(Plot(_localization, _plotImage, AssetClassification(_class), WoodType(_woodTypeForPLot), _plotAge, _plotPlantingYear, _plotCutYear));
+    uint16 correctAgeForPlotsInFlorest = correspondingFlorest.plotsInFlorest[0].plotAge;
+    uint16 correctWoodTypeForPlotsInFlorest = uint16(correspondingFlorest.plotsInFlorest[0].woodTypeForPlot);
+    for(uint32 i = 0; i < correspondingFlorest.plotsInFlorest.length; i++){
+        require(_plotAge == correctAgeForPlotsInFlorest, "plots of different age");
+        require(uint16(_woodTypeForPLot) == correctWoodTypeForPlotsInFlorest,"plots of different specie");
+    }
+}
     /*╔══════════════════════════════╗
       ║     CHECK FUNCTIONS          ║
       ╚══════════════════════════════╝*/
+function getPlotsInFlorest(uint16 _florestId) external view returns(Plot[] memory) {
+    return florests[_florestId].plotsInFlorest;
+}
+
+function getAgeAndWoodTypeForAFlorest(uint8 _correspondingFlorest) external view returns(uint16, uint16){
+    Florest storage correspondingFlorest = florests[_correspondingFlorest];
+
+    uint16 correctAgeForPlotsInFlorest = correspondingFlorest.plotsInFlorest[0].plotAge;
+    uint16 correctWoodTypeForPlotsInFlorest = uint16(correspondingFlorest.plotsInFlorest[0].woodTypeForPlot);
+    return (correctAgeForPlotsInFlorest, correctWoodTypeForPlotsInFlorest);
+}
       
 function checkOwnership() public view returns(address) {
     return owner();
