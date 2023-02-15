@@ -47,7 +47,8 @@ NegociationType dealType;
 uint32 public maxGlobalAllowedFlorestTokenizationPercentage = 80000; //it represents 80% => 80/100 = (for simplicity) 80000
 
 mapping(uint16 => Plot[]) plotsInFlorest;
-mapping(uint16 => Asset[]) public assetsInPlots;
+mapping(uint16 => Asset[]) public assetsInFlorest;
+//mapping(uint16 => Asset[]) public assetsInPlots;
 mapping(uint8 => Florest) public florestsInProperty;
 
 struct Florest {
@@ -68,14 +69,14 @@ struct Plot {
 }
 
 struct Asset {
-    bytes32 geographicLocation;
-    bytes32 buyOrSellContractLink;
+    string geographicLocation;
+    string buyOrSellContractLink;
     NegociationType assetTokenizationType;
     address initialOwner;
     address currentTokenOwner;
     AssetClassification class;
     bool isCurrentAssetAvailableForTransfer;
-    bytes32 assetPropertyRegistration;
+    string assetPropertyRegistration;
 }
 
     /*╔═════════════════════════════╗
@@ -134,11 +135,9 @@ constructor(
     uint256[] memory _ids,
     uint256[] memory _amount
     ) ERC1155("https://game.example/api/item/{id}.json") GoTokensRoles(msg.sender, _minter) {
-    assetId++;
     //console.log(assetId);
-    _mintBatch(_initialOwner, _ids, _amount, "mint");
+    //_mintBatch(_initialOwner, _ids, _amount, "mint");
     //setApprovalToTransferAssets(_initialOwner, msg.sender, true);
-
 }
 
 uint32 public woodPropertyMaxPotential;
@@ -164,6 +163,47 @@ function createAFlorest(
     return florestId;
 }
 
+// uma floresta pode ter vários assets dentro dela.
+// um asset pode estar dividido entre vários plots
+// não se tokeniza plots, mas sim florests
+// um asset não pode estar em duas florestas, pois florestas diferentes não têm a mesma idade.
+// como o asset já tem sua localização especificada, o resto é dispensável
+// pelas regras acima, numa propriedade, há várias florestas e podemos dar um push dentro
+// de cada floresta, não importando se essa contém um ou mais plots, pq os assets conterão 
+// as coordenadas do asset - que pode estar dentro, ou englobar vários plots.
+function createAsset(Asset memory asset, uint16 _correspondingFlorest, uint256[] memory ids, uint256[] memory amount) external {
+    //Florest storage florest = florestsInProperty[_correspondingFlorest];
+    //validate if asset tokenization amount doesn't overflow florest's
+    // validate if geographic location of different assets is the same
+    if(assetId == 1){
+    assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
+    } else {
+        for(uint8 i = 0; i <= assetId; i++){
+            string storage geo = assetsInFlorest[_correspondingFlorest][i].geographicLocation;
+            require(keccak256(abi.encodePacked(asset.geographicLocation)) != keccak256(abi.encodePacked(geo)),"asset exists");
+        }
+    }
+    //mint
+    _mintBatch(asset.currentTokenOwner, ids, amount,"");
+    setApprovalToTransferAssets(asset.currentTokenOwner, msg.sender, true);
+    //increase number of assets minted in property
+    assetId++;
+}
+
+//create florest
+//create asset
+//check balanceOf
+//try to transfer using safeTransferFrom
+// struct Asset {
+//     string geographicLocation;
+//     string buyOrSellContractLink;
+//     NegociationType assetTokenizationType;
+//     address initialOwner;
+//     address currentTokenOwner;
+//     AssetClassification class;
+//     bool isCurrentAssetAvailableForTransfer;
+//     string assetPropertyRegistration;
+// }
 
 // function createAsset(Asset memory _asset) internal {
     
@@ -222,6 +262,12 @@ function createAPlot(
     }
 }
 
+// function to reset number of plots in florest
+function resetPlotQuantityinFlorest(uint8 _correspondingFlorest, uint16 _newPlotQuantityInFlorest) external onlyOwner {
+    Florest storage florest = florestsInProperty[_correspondingFlorest];
+    florest.plotsQuantityInCurrentFlorest = _newPlotQuantityInFlorest;
+}
+
 //getter for number of plots in florest.
 function getCurrentPlotNumberinFlorest(uint8 _correspondingFlorest) external view returns(uint8) {
     Florest storage florest = florestsInProperty[_correspondingFlorest];
@@ -251,21 +297,21 @@ function checkOwnership() public view returns(address) {
     return owner();
 }
     
-function isAssetAvailableForTransfer(uint8 _assetId) internal view returns(bool){
-        Asset[] storage asset = assetsInPlots[_assetId];
-        return asset[assetId].isCurrentAssetAvailableForTransfer;
-}
+// function isAssetAvailableForTransfer(uint8 _assetId) internal view returns(bool){
+//         Asset[] storage asset = assetsInPlots[_assetId];
+//         return asset[assetId].isCurrentAssetAvailableForTransfer;
+// }
 
 function setCurrentYear(uint16 _currentYear) external onlyRole(MINTER_ROLE) {
         currentYear = _currentYear;
 }
 
-function setAssetAvailabilityForTransfer(uint8 _assetId, bool _availability) external returns(bool) {
-        Asset[] storage asset = assetsInPlots[_assetId];
-        asset[assetId].isCurrentAssetAvailableForTransfer = _availability;
-        assetId++;
-        return asset[_assetId].isCurrentAssetAvailableForTransfer;
-}
+// function setAssetAvailabilityForTransfer(uint8 _assetId, bool _availability) external returns(bool) {
+//         Asset[] storage asset = assetsInPlots[_assetId];
+//         asset[assetId].isCurrentAssetAvailableForTransfer = _availability;
+//         assetId++;
+//         return asset[_assetId].isCurrentAssetAvailableForTransfer;
+// }
 
 // make the function available for future mints of other asset in the same florest 
 function mint(
@@ -307,14 +353,14 @@ function setApprovalToTransferAssets(address holderAccount, address operator, bo
 
 
 //This function needs to be invoked whenever the TED  transfer has been done
-function transferAsset(uint8 _assetId, address _newOwner, uint256 _amount) external {
-    require(isAssetAvailableForTransfer(_assetId), "asset is currently not available for transfer");
+//function transferAsset(uint8 _assetId, address _newOwner, uint256 _amount) external {
+    //require(isAssetAvailableForTransfer(_assetId), "asset is currently not available for transfer");
     //address pastOwner = assets[_assetId].tokenOwner;
     //setApprovalToTransferAssets(pastOwner, msg.sender, true);
     //safeTransferFrom(pastOwner, _newOwner, _assetId, _amount, "transfer");
     //assets[_assetId].tokenOwner = _newOwner;
     //emit AssetTransferred(_assetId, _newOwner, assets[_assetId].tokenOwner == _newOwner);
-}
+//}
 
 //function declared to avoid the below compilation error:
 //TypeError: Derived contract must override function "supportsInterface". Two or more base classes define function with same name and parameter types.

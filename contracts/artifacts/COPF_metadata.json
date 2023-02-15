@@ -396,17 +396,17 @@
 						"type": "uint256"
 					}
 				],
-				"name": "assetsInPlots",
+				"name": "assetsInFlorest",
 				"outputs": [
 					{
-						"internalType": "bytes32",
+						"internalType": "string",
 						"name": "geographicLocation",
-						"type": "bytes32"
+						"type": "string"
 					},
 					{
-						"internalType": "bytes32",
+						"internalType": "string",
 						"name": "buyOrSellContractLink",
-						"type": "bytes32"
+						"type": "string"
 					},
 					{
 						"internalType": "enum COPF.NegociationType",
@@ -434,9 +434,9 @@
 						"type": "bool"
 					},
 					{
-						"internalType": "bytes32",
+						"internalType": "string",
 						"name": "assetPropertyRegistration",
-						"type": "bytes32"
+						"type": "string"
 					}
 				],
 				"stateMutability": "view",
@@ -653,6 +653,76 @@
 						"type": "tuple"
 					}
 				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "geographicLocation",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "buyOrSellContractLink",
+								"type": "string"
+							},
+							{
+								"internalType": "enum COPF.NegociationType",
+								"name": "assetTokenizationType",
+								"type": "uint8"
+							},
+							{
+								"internalType": "address",
+								"name": "initialOwner",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "currentTokenOwner",
+								"type": "address"
+							},
+							{
+								"internalType": "enum COPF.AssetClassification",
+								"name": "class",
+								"type": "uint8"
+							},
+							{
+								"internalType": "bool",
+								"name": "isCurrentAssetAvailableForTransfer",
+								"type": "bool"
+							},
+							{
+								"internalType": "string",
+								"name": "assetPropertyRegistration",
+								"type": "string"
+							}
+						],
+						"internalType": "struct COPF.Asset",
+						"name": "asset",
+						"type": "tuple"
+					},
+					{
+						"internalType": "uint16",
+						"name": "_correspondingFlorest",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "ids",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "amount",
+						"type": "uint256[]"
+					}
+				],
+				"name": "createAsset",
+				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
@@ -1030,6 +1100,24 @@
 			{
 				"inputs": [
 					{
+						"internalType": "uint8",
+						"name": "_correspondingFlorest",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint16",
+						"name": "_newPlotQuantityInFlorest",
+						"type": "uint16"
+					}
+				],
+				"name": "resetPlotQuantityinFlorest",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "bytes32",
 						"name": "role",
 						"type": "bytes32"
@@ -1132,30 +1220,6 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint8",
-						"name": "_assetId",
-						"type": "uint8"
-					},
-					{
-						"internalType": "bool",
-						"name": "_availability",
-						"type": "bool"
-					}
-				],
-				"name": "setAssetAvailabilityForTransfer",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
 						"internalType": "uint16",
 						"name": "_currentYear",
 						"type": "uint16"
@@ -1203,14 +1267,14 @@
 					{
 						"components": [
 							{
-								"internalType": "bytes32",
+								"internalType": "string",
 								"name": "geographicLocation",
-								"type": "bytes32"
+								"type": "string"
 							},
 							{
-								"internalType": "bytes32",
+								"internalType": "string",
 								"name": "buyOrSellContractLink",
-								"type": "bytes32"
+								"type": "string"
 							},
 							{
 								"internalType": "enum COPF.NegociationType",
@@ -1238,9 +1302,9 @@
 								"type": "bool"
 							},
 							{
-								"internalType": "bytes32",
+								"internalType": "string",
 								"name": "assetPropertyRegistration",
-								"type": "bytes32"
+								"type": "string"
 							}
 						],
 						"internalType": "struct COPF.Asset",
@@ -1259,29 +1323,6 @@
 					}
 				],
 				"name": "tokenizeAssetInFlorest",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint8",
-						"name": "_assetId",
-						"type": "uint8"
-					},
-					{
-						"internalType": "address",
-						"name": "_newOwner",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "_amount",
-						"type": "uint256"
-					}
-				],
-				"name": "transferAsset",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -1518,11 +1559,11 @@
 			]
 		},
 		"COPF.sol": {
-			"keccak256": "0x3a72da4a40e516a7f4b6d1bd569143374285189b0d8bdf3a175db13c3d295baf",
+			"keccak256": "0x1f6a5fa1a53bde161a08082c554ac33ef8cedc5459f121573ee68a1319ee2a58",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://b78d20bb784c3a97125435b8d5b18b62dd2f12c63d23a1f1518bf51b8ad759d6",
-				"dweb:/ipfs/QmY3r33E8AyjLiAwdDuMGGNUSUuUJjNRvNSjV5PjnnbwY3"
+				"bzz-raw://6c7f655a179c11b690d0dbd7eccccd1d0fe68f1e3f4b132926cff9e0ad323984",
+				"dweb:/ipfs/QmYvsQTEPZubnAHTqakFZBUKMcsvJR67qt25Tth5LPHtvJ"
 			]
 		},
 		"hardhat/console.sol": {
