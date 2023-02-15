@@ -1,29 +1,23 @@
 {
-  "name": "ftk-smart-contract",
+  "name": "ftk-contract",
   "version": "1.0.0",
-  "description": "Contrato COPF:",
-  "main": "index.js",
+  "description": "Váriaveis Globais do Smart Contract e struct da Floresta  | Nível | Variável | Type | Done | On-Chain | | ------ | ------ | ------ | ------ | ------ |  | Floresta | localizações dos talhões | Array | ☑ | ☑ | | Floresta | Imagens | Array | ☑ | ❌ | | Floresta | Tipo de madeira| Enum | ☑ | ☑ | | Floresta | Idade do talhão| Dates | ☑ | ☑ | | Floresta | Ano de Plantio | Dates | ☑ | ☑ | | Floresta | Ano de Corte| Dates | ☑ | ☑ | | Floresta | % Máxima de Tokenização Universal | Number = 80% | ☑ | ☑ | | Floresta | Tokenização Liberada pela FTK | Number | ☑ | ☑ | | Floresta | Nome da Floresta | Texto | ☑ | ❌ | | Floresta | Quantidade de talhões na floresta | Number | ☑ | ☑ | | Smart Contract | Matrícula do Imóvel | Número | ☑ | ☑ | | Smart Contract | % de tokenização utilizada pela floresta | Number | ☑ | ☑ | | Smart Contract |Potencial total de m³ de madeira da Propriedade | Number | ☑ | ❌ | | Smart Contract | link do data room | Texto | ☑ | ❌ | | Smart Contract | link do contrato de compra e venda | Texto | ☑ | ☑ | | Smart Contract | link do contrato de tokenização | Texto | ☑ | ☑ | | Smart Contract | Quantidade de florestas na propriedade | Number | ☑ | ☑ |",
+  "main": "hardhat.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/caiosabarros/ftk-smart-contract.git"
+    "url": "git+https://github.com/goblockchain/ftk-contract.git"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/caiosabarros/ftk-smart-contract/issues"
+    "url": "https://github.com/goblockchain/ftk-contract/issues"
   },
-  "homepage": "https://github.com/caiosabarros/ftk-smart-contract#readme",
-  "dependencies": {
-    "@openzeppelin/contracts": "^4.8.1",
-    "openzeppelin-solidity": "^3.4.2"
-  },
+  "homepage": "https://github.com/goblockchain/ftk-contract#readme",
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
-    "@nomiclabs/hardhat-waffle": "^2.0.3",
-    "ethereum-waffle": "^3.4.4",
-    "hardhat": "^2.12.6"
+    "@openzeppelin/contracts": "^4.8.1"
   }
 }

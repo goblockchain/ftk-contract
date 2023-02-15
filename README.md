@@ -1,23 +1,25 @@
 # COPF
 ## _Dados Armazenados no Contrato_
-Váriaveis Globais do Smart Contract 
+Váriaveis Globais do Smart Contract e struct da Floresta 
 | Nível | Variável | Type | Done | On-Chain |
 | ------ | ------ | ------ | ------ | ------ | 
-| Smart Contract | localizações dos talhões | Array | ☑ | ☑ |
-| Smart Contract | Imagens | Array | ☑ | ❌ |
-| Smart Contract |Potencial total de m³ de madeira| Number | ☑ | ❌ |
-| Smart Contract | Tipo de madeira| Enum | ☑ | ☑ |
-| Smart Contract | Idade do talhão| Dates | ☑ | ☑ |
-| Smart Contract | Ano de Plantio | Dates | ☑ | ☑ |
-| Smart Contract | Ano de Corte| Dates | ☑ | ☑ |
-| Smart Contract | % Máxima de Tokenização Universal | Number = 80% | ☑ | ☑ |
-| Smart Contract | Nome da Floresta | Texto | ☑ | ❌ |
+| Floresta | localizações dos talhões | Array | ☑ | ☑ |
+| Floresta | Imagens | Array | ☑ | ❌ |
+| Floresta | Tipo de madeira| Enum | ☑ | ☑ |
+| Floresta | Idade do talhão| Dates | ☑ | ☑ |
+| Floresta | Ano de Plantio | Dates | ☑ | ☑ |
+| Floresta | Ano de Corte| Dates | ☑ | ☑ |
+| Floresta | % Máxima de Tokenização Universal | Number = 80% | ☑ | ☑ |
+| Floresta | Tokenização Liberada pela FTK | Number | ☑ | ☑ |
+| Floresta | Nome da Floresta | Texto | ☑ | ❌ |
+| Floresta | Quantidade de talhões na floresta | Number | ☑ | ☑ |
 | Smart Contract | Matrícula do Imóvel | Número | ☑ | ☑ |
-| Smart Contract | Quantidade de talhões na floresta | Number | ☑ | ☑ |
-| Smart Contract | % máxima de tokenização liberada p/ a floresta | Number | ☑ | ☑ |
+| Smart Contract | % de tokenização utilizada pela floresta | Number | ☑ | ☑ |
+| Smart Contract |Potencial total de m³ de madeira da Propriedade | Number | ☑ | ❌ |
 | Smart Contract | link do data room | Texto | ☑ | ❌ |
 | Smart Contract | link do contrato de compra e venda | Texto | ☑ | ☑ |
 | Smart Contract | link do contrato de tokenização | Texto | ☑ | ☑ |
+| Smart Contract | Quantidade de florestas na propriedade | Number | ☑ | ☑ |
 
 ## Funções do Smart Contract:
 O smart contract representa a propriedade e as estruturas de Lote, Floresta e Talhão ficam dentro da floresta:
@@ -73,10 +75,9 @@ Talhão:
 | Talhão | Imagem | ☑ | ❌ |
 | Talhão |Potencial total de m³ de madeira| | ❌ |
 |  Talhão| Tipo de madeira| ☑ | ☑ |
-| Talhão | Idade do talhão| ☑ | ☑ |
-| Talhão | Ano de Plantio | ☑ | ☑ |
-| Talhão | Ano de Corte| ☑ | ☑ |
-| Talhão | Greenfield/Brownfield| ☑ | ☑ |
+| Talhão | Idade do talhão| ☑ | ❌ |
+| Talhão | Ano de Plantio | ☑ | ❌ |
+| Talhão | Ano de Corte| ☑ | ❌ |
 
 Lote/NFT:
 | Struct | Propriedade | Done | on-Chain |
@@ -92,7 +93,7 @@ Lote/NFT:
 | Lote | Valor de venda (vem da FTK) | ☑ | ❌ |
 | Lote | Proprietário | ☑ | ☑ |
 | Lote | Atual detentor da NFT | ☑ | ☑ |
-| Lote | Greenfield/Brownfield| ☑ | ☑ |
+
 
 ## Localização do Lote
 ### Lote constituído de pedaços diferentes de vários talhões 
@@ -167,6 +168,8 @@ set the tokenizationType
 function to set the value by which asset was sold
 setter of currentOwner of asset
 getter for an asset inside a florest
+
+getter for plots that aren't the first plots in florest.
 
 How to encode arguments in a struct call:
 To create an asset, for example:

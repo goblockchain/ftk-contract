@@ -9,38 +9,13 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "_minter",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
 						"name": "_initialOwner",
 						"type": "address"
 					},
 					{
-						"internalType": "uint8",
-						"name": "_maxAssetsQuantity",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint8",
-						"name": "_assetType",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint16",
-						"name": "_projectStart",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint16",
-						"name": "_projectEnd",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint8",
-						"name": "_assetclass",
-						"type": "uint8"
+						"internalType": "address",
+						"name": "_minter",
+						"type": "address"
 					},
 					{
 						"internalType": "uint256[]",
@@ -397,19 +372,6 @@
 			},
 			{
 				"inputs": [],
-				"name": "assetClassif",
-				"outputs": [
-					{
-						"internalType": "enum COPF.AssetClassification",
-						"name": "",
-						"type": "uint8"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
 				"name": "assetId",
 				"outputs": [
 					{
@@ -422,57 +384,49 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "assetType",
-				"outputs": [
-					{
-						"internalType": "enum COPF.AssetType",
-						"name": "",
-						"type": "uint8"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
 				"inputs": [
 					{
-						"internalType": "uint8",
+						"internalType": "uint16",
 						"name": "",
-						"type": "uint8"
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
 					}
 				],
-				"name": "assets",
+				"name": "assetsInPlots",
 				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "geographicLocation",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "buyOrSellContractLink",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "enum COPF.NegociationType",
+						"name": "assetTokenizationType",
+						"type": "uint8"
+					},
 					{
 						"internalType": "address",
 						"name": "initialOwner",
 						"type": "address"
 					},
 					{
-						"internalType": "enum COPF.AssetType",
-						"name": "assetType",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint16",
-						"name": "projectStart",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint16",
-						"name": "projectEnd",
-						"type": "uint16"
+						"internalType": "address",
+						"name": "currentTokenOwner",
+						"type": "address"
 					},
 					{
 						"internalType": "enum COPF.AssetClassification",
-						"name": "assetClassification",
+						"name": "class",
 						"type": "uint8"
-					},
-					{
-						"internalType": "uint32",
-						"name": "AssetValuation",
-						"type": "uint32"
 					},
 					{
 						"internalType": "bool",
@@ -480,9 +434,9 @@
 						"type": "bool"
 					},
 					{
-						"internalType": "address",
-						"name": "tokenOwner",
-						"type": "address"
+						"internalType": "bytes32",
+						"name": "assetPropertyRegistration",
+						"type": "bytes32"
 					}
 				],
 				"stateMutability": "view",
@@ -596,6 +550,113 @@
 				"type": "function"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "uint16",
+						"name": "_plotsQuantityInCurrentFlorest",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint32",
+						"name": "_tokenizationPercentageGivenToFlorest",
+						"type": "uint32"
+					},
+					{
+						"internalType": "enum COPF.WoodType",
+						"name": "_woodTypeForFlorest",
+						"type": "uint8"
+					}
+				],
+				"name": "createAFlorest",
+				"outputs": [
+					{
+						"internalType": "uint16",
+						"name": "",
+						"type": "uint16"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "localization",
+								"type": "string"
+							},
+							{
+								"internalType": "uint16",
+								"name": "plotAge",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint16",
+								"name": "plotPlantingYear",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint16",
+								"name": "plotCutYear",
+								"type": "uint16"
+							},
+							{
+								"internalType": "enum COPF.WoodType",
+								"name": "woodTypeForPlot",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct COPF.Plot",
+						"name": "plot",
+						"type": "tuple"
+					},
+					{
+						"internalType": "uint8",
+						"name": "_correspondingFlorest",
+						"type": "uint8"
+					}
+				],
+				"name": "createAPlot",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "localization",
+								"type": "string"
+							},
+							{
+								"internalType": "uint16",
+								"name": "plotAge",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint16",
+								"name": "plotPlantingYear",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint16",
+								"name": "plotCutYear",
+								"type": "uint16"
+							},
+							{
+								"internalType": "enum COPF.WoodType",
+								"name": "woodTypeForPlot",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct COPF.Plot",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "currentYear",
 				"outputs": [
@@ -603,6 +664,168 @@
 						"internalType": "uint16",
 						"name": "",
 						"type": "uint16"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "dataRoomLink",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"name": "florestsInProperty",
+				"outputs": [
+					{
+						"internalType": "uint32",
+						"name": "tokenizedPercentage",
+						"type": "uint32"
+					},
+					{
+						"internalType": "enum COPF.WoodType",
+						"name": "woodTypeForFlorest",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint16",
+						"name": "plotsQuantityInCurrentFlorest",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint32",
+						"name": "tokenizationPercentageGivenToFlorest",
+						"type": "uint32"
+					},
+					{
+						"internalType": "enum COPF.AssetClassification",
+						"name": "class",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "florestsQuantity",
+				"outputs": [
+					{
+						"internalType": "uint16",
+						"name": "",
+						"type": "uint16"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "_correspondingFlorest",
+						"type": "uint8"
+					}
+				],
+				"name": "getDefaultPlot",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "localization",
+								"type": "string"
+							},
+							{
+								"internalType": "uint16",
+								"name": "plotAge",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint16",
+								"name": "plotPlantingYear",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint16",
+								"name": "plotCutYear",
+								"type": "uint16"
+							},
+							{
+								"internalType": "enum COPF.WoodType",
+								"name": "woodTypeForPlot",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct COPF.Plot",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "_correspondingFlorest",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint16",
+						"name": "_correspondingPlot",
+						"type": "uint16"
+					}
+				],
+				"name": "getPlot",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "localization",
+								"type": "string"
+							},
+							{
+								"internalType": "uint16",
+								"name": "plotAge",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint16",
+								"name": "plotPlantingYear",
+								"type": "uint16"
+							},
+							{
+								"internalType": "uint16",
+								"name": "plotCutYear",
+								"type": "uint16"
+							},
+							{
+								"internalType": "enum COPF.WoodType",
+								"name": "woodTypeForPlot",
+								"type": "uint8"
+							}
+						],
+						"internalType": "struct COPF.Plot",
+						"name": "",
+						"type": "tuple"
 					}
 				],
 				"stateMutability": "view",
@@ -643,25 +866,6 @@
 				"name": "grantRole",
 				"outputs": [],
 				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint8",
-						"name": "_assetId",
-						"type": "uint8"
-					}
-				],
-				"name": "hasAssetValuationBeenSet",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -714,12 +918,12 @@
 			},
 			{
 				"inputs": [],
-				"name": "maxAssetsQuantity",
+				"name": "maxGlobalAllowedFlorestTokenizationPercentage",
 				"outputs": [
 					{
-						"internalType": "uint8",
+						"internalType": "uint32",
 						"name": "",
-						"type": "uint8"
+						"type": "uint32"
 					}
 				],
 				"stateMutability": "view",
@@ -731,31 +935,6 @@
 						"internalType": "address",
 						"name": "_initialOwner",
 						"type": "address"
-					},
-					{
-						"internalType": "enum COPF.AssetType",
-						"name": "_assetType",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint16",
-						"name": "_projectStart",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint16",
-						"name": "_projectEnd",
-						"type": "uint16"
-					},
-					{
-						"internalType": "enum COPF.AssetClassification",
-						"name": "_assetclass",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint32",
-						"name": "_assetValuation",
-						"type": "uint32"
 					},
 					{
 						"internalType": "uint256[]",
@@ -781,6 +960,32 @@
 						"internalType": "address",
 						"name": "",
 						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "plotId",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "propertyRegistration",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -940,49 +1145,12 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint8",
-						"name": "_assetId",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint32",
-						"name": "_assetValuation",
-						"type": "uint32"
-					}
-				],
-				"name": "setAssetValuation",
-				"outputs": [
-					{
-						"internalType": "uint32",
-						"name": "",
-						"type": "uint32"
-					}
-				],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
 						"internalType": "uint16",
 						"name": "_currentYear",
 						"type": "uint16"
 					}
 				],
 				"name": "setCurrentYear",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint8",
-						"name": "_maxAssetsQuantity",
-						"type": "uint8"
-					}
-				],
-				"name": "setMaxQuantityForCurrentCOPF",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -1004,6 +1172,84 @@
 					}
 				],
 				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "tokenizationContractLink",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "geographicLocation",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "buyOrSellContractLink",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "enum COPF.NegociationType",
+								"name": "assetTokenizationType",
+								"type": "uint8"
+							},
+							{
+								"internalType": "address",
+								"name": "initialOwner",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "currentTokenOwner",
+								"type": "address"
+							},
+							{
+								"internalType": "enum COPF.AssetClassification",
+								"name": "class",
+								"type": "uint8"
+							},
+							{
+								"internalType": "bool",
+								"name": "isCurrentAssetAvailableForTransfer",
+								"type": "bool"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "assetPropertyRegistration",
+								"type": "bytes32"
+							}
+						],
+						"internalType": "struct COPF.Asset",
+						"name": "_asset",
+						"type": "tuple"
+					},
+					{
+						"internalType": "uint32",
+						"name": "_tokenizePercentage",
+						"type": "uint32"
+					},
+					{
+						"internalType": "uint8",
+						"name": "_correspondingFlorest",
+						"type": "uint8"
+					}
+				],
+				"name": "tokenizeAssetInFlorest",
+				"outputs": [],
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -1056,6 +1302,19 @@
 						"internalType": "string",
 						"name": "",
 						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "woodPropertyMaxPotential",
+				"outputs": [
+					{
+						"internalType": "uint32",
+						"name": "",
+						"type": "uint32"
 					}
 				],
 				"stateMutability": "view",
@@ -1121,7 +1380,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/COPF.sol": "COPF"
+			"COPF.sol": "COPF"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -1129,7 +1388,7 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
+			"enabled": true,
 			"runs": 200
 		},
 		"remappings": []
@@ -1247,12 +1506,20 @@
 				"dweb:/ipfs/Qmct36zWXv3j7LZB83uwbg7TXwnZSN1fqHNDZ93GG98bGz"
 			]
 		},
-		"contracts/COPF.sol": {
-			"keccak256": "0x6cc66634e7e477cc73576cd5c82ed4ec85769d677ec8559465f355b8681ee383",
+		"COPF.sol": {
+			"keccak256": "0x87913af9e104adb919761b0204ff47420ad671327d78e22dfd70fc88edb2b40e",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://f59074029c4874b12513545924b1839f469ef43f9c83c13b4d6200db57201404",
+				"dweb:/ipfs/QmR5vVQZfW6Zw3J3pDYAUikABiQmwYJ9xMut74YSzZDzXm"
+			]
+		},
+		"hardhat/console.sol": {
+			"keccak256": "0x60b0215121bf25612a6739fb2f1ec35f31ee82e4a8216c032c8243d904ab3aa9",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://de086fc44f03880f1cd7c9e59c5e95c09d5bad61fbc5af0a9a093ce05fcbc72b",
-				"dweb:/ipfs/QmVG4SHue7yimNjb2iMWvK2zqU5gJXQX55gL1zuxfTB3H8"
+				"bzz-raw://6e29880d33dd479bb046ba306993d26ccb779a4b1d94a046cb3567f22948bb4d",
+				"dweb:/ipfs/QmfTY1qzPt5C63Wc7y6JqfZr5899NRvXYdCpyLzR5FXQic"
 			]
 		},
 		"utils/GoTokensRole.sol": {
