@@ -1559,11 +1559,11 @@
 			]
 		},
 		"COPF.sol": {
-			"keccak256": "0x1f6a5fa1a53bde161a08082c554ac33ef8cedc5459f121573ee68a1319ee2a58",
+			"keccak256": "0x4f7b2c7fdad00190f66c48ea5e851d98e45239f0d967fc68339dd0d68c5421cc",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://6c7f655a179c11b690d0dbd7eccccd1d0fe68f1e3f4b132926cff9e0ad323984",
-				"dweb:/ipfs/QmYvsQTEPZubnAHTqakFZBUKMcsvJR67qt25Tth5LPHtvJ"
+				"bzz-raw://21cdd143e4c053bfd47e7806c094e6e37e3214453ac16efe2047421a062ce4ea",
+				"dweb:/ipfs/QmZTuE9bCYZ4hRFxF3sYRMhuot48GeJTUUPrTXrYJ88Zt6"
 			]
 		},
 		"hardhat/console.sol": {

@@ -174,13 +174,17 @@ function createAFlorest(
 function createAsset(Asset memory asset, uint16 _correspondingFlorest, uint256[] memory ids, uint256[] memory amount) external {
     //Florest storage florest = florestsInProperty[_correspondingFlorest];
     //validate if asset tokenization amount doesn't overflow florest's
+  
     // validate if geographic location of different assets is the same
     if(assetId == 1){
     assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
     } else {
-        for(uint8 i = 0; i <= assetId; i++){
+        console.log(assetId);
+        for(uint8 i = 0; i < (assetsInFlorest[_correspondingFlorest].length-1); i++){
             string storage geo = assetsInFlorest[_correspondingFlorest][i].geographicLocation;
+            console.log("", geo);
             require(keccak256(abi.encodePacked(asset.geographicLocation)) != keccak256(abi.encodePacked(geo)),"asset exists");
+            assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
         }
     }
     //mint
@@ -188,6 +192,7 @@ function createAsset(Asset memory asset, uint16 _correspondingFlorest, uint256[]
     setApprovalToTransferAssets(asset.currentTokenOwner, msg.sender, true);
     //increase number of assets minted in property
     assetId++;
+    console.log(assetId);
 }
 
 //create florest
