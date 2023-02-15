@@ -716,6 +716,11 @@
 						"internalType": "enum COPF.AssetClassification",
 						"name": "class",
 						"type": "uint8"
+					},
+					{
+						"internalType": "uint8",
+						"name": "plotId",
+						"type": "uint8"
 					}
 				],
 				"stateMutability": "view",
@@ -729,6 +734,25 @@
 						"internalType": "uint16",
 						"name": "",
 						"type": "uint16"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "_correspondingFlorest",
+						"type": "uint8"
+					}
+				],
+				"name": "getCurrentPlotNumberinFlorest",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
 					}
 				],
 				"stateMutability": "view",
@@ -960,19 +984,6 @@
 						"internalType": "address",
 						"name": "",
 						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "plotId",
-				"outputs": [
-					{
-						"internalType": "uint8",
-						"name": "",
-						"type": "uint8"
 					}
 				],
 				"stateMutability": "view",
@@ -1507,11 +1518,11 @@
 			]
 		},
 		"COPF.sol": {
-			"keccak256": "0x87913af9e104adb919761b0204ff47420ad671327d78e22dfd70fc88edb2b40e",
+			"keccak256": "0x3a72da4a40e516a7f4b6d1bd569143374285189b0d8bdf3a175db13c3d295baf",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://f59074029c4874b12513545924b1839f469ef43f9c83c13b4d6200db57201404",
-				"dweb:/ipfs/QmR5vVQZfW6Zw3J3pDYAUikABiQmwYJ9xMut74YSzZDzXm"
+				"bzz-raw://b78d20bb784c3a97125435b8d5b18b62dd2f12c63d23a1f1518bf51b8ad759d6",
+				"dweb:/ipfs/QmY3r33E8AyjLiAwdDuMGGNUSUuUJjNRvNSjV5PjnnbwY3"
 			]
 		},
 		"hardhat/console.sol": {

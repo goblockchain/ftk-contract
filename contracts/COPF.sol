@@ -27,7 +27,7 @@ string public tokenizationContractLink;
 uint16 public florestsQuantity;
 mapping(uint16 => Florest) florests;
 uint8 public assetId = 1;
-uint8 public plotId = 0;
+//uint8 public plotId = 0;
 uint8 florestId = 1;
 uint16 public currentYear = 2023;
 
@@ -51,12 +51,12 @@ mapping(uint16 => Asset[]) public assetsInPlots;
 mapping(uint8 => Florest) public florestsInProperty;
 
 struct Florest {
-    //Plot[] plotsInFlorest;
     uint32 tokenizedPercentage;
     WoodType woodTypeForFlorest; 
     uint16 plotsQuantityInCurrentFlorest;
     uint32 tokenizationPercentageGivenToFlorest;
     AssetClassification class;
+    uint8 plotId;
 }
 
 struct Plot {
@@ -165,18 +165,19 @@ function createAFlorest(
 }
 
 
-function createAsset(Asset memory _asset) internal {
-    Asset storage asset = assetsInPlots[plotId][assetId];
-    asset.geographicLocation = _asset.geographicLocation;
-    asset.buyOrSellContractLink = _asset.buyOrSellContractLink;
-    asset.assetTokenizationType = _asset.assetTokenizationType;
-    asset.initialOwner = _asset.initialOwner;
-    asset.currentTokenOwner = _asset.currentTokenOwner;
-    asset.class = _asset.class;
-    asset.isCurrentAssetAvailableForTransfer = _asset.isCurrentAssetAvailableForTransfer;
-    asset.assetPropertyRegistration = _asset.assetPropertyRegistration;
-    //mint function
-}
+// function createAsset(Asset memory _asset) internal {
+    
+//     Asset storage asset = assetsInPlots[][assetId];
+//     asset.geographicLocation = _asset.geographicLocation;
+//     asset.buyOrSellContractLink = _asset.buyOrSellContractLink;
+//     asset.assetTokenizationType = _asset.assetTokenizationType;
+//     asset.initialOwner = _asset.initialOwner;
+//     asset.currentTokenOwner = _asset.currentTokenOwner;
+//     asset.class = _asset.class;
+//     asset.isCurrentAssetAvailableForTransfer = _asset.isCurrentAssetAvailableForTransfer;
+//     asset.assetPropertyRegistration = _asset.assetPropertyRegistration;
+//     //mint function
+// }
 
 function tokenizeAssetInFlorest(Asset memory _asset,uint32 _tokenizePercentage, uint8 _correspondingFlorest) external {
     //get florest
@@ -187,7 +188,7 @@ function tokenizeAssetInFlorest(Asset memory _asset,uint32 _tokenizePercentage, 
     florest.tokenizedPercentage = _tokenizePercentage;
     //create an asset with the tokenizePercentage
     //call another function to create the asset
-    createAsset(_asset);
+    //createAsset(_asset);
 }
 
 function getPlot(uint8 _correspondingFlorest, uint16 _correspondingPlot) external view returns(Plot memory) {
@@ -201,20 +202,30 @@ function createAPlot(
     uint8 _correspondingFlorest
 ) external returns(Plot memory)
 {
-    //validate plot's wood with florest's wood
-    //validate plot's age and woodType
-    if(plotId == 0) {
+    Florest storage florest = florestsInProperty[_correspondingFlorest];
+    //validate florest's number of plots
+    require((florest.plotId + 1) <= florest.plotsQuantityInCurrentFlorest,"exceeded");
+    require(florest.woodTypeForFlorest == plot.woodTypeForPlot,"diffwood");
+    //validate type of florest's wood type with plot's wood type
+    if(florest.plotId == 0) {
         plotsInFlorest[_correspondingFlorest].push(Plot(plot.localization,plot.plotAge,plot.plotPlantingYear,plot.plotCutYear,plot.woodTypeForPlot));
-        plotId++;
+        florest.plotId++;
     } else {
-         Plot storage _plot = plotsInFlorest[_correspondingFlorest][0];
-         require(plot.woodTypeForPlot == _plot.woodTypeForPlot, "wood type naif"); //naif = not accepted in florest
-         require(plot.plotAge == _plot.plotAge, "plot age naif");
+        Plot storage _plot = plotsInFlorest[_correspondingFlorest][0];
+        //validate plot's wood with florest's wood
+        require(plot.woodTypeForPlot == _plot.woodTypeForPlot, "wood type naif"); //naif = not accepted in florest
+        //validate plot's age and woodType
+        require(plot.plotAge == _plot.plotAge, "plot age naif");
+        //create plot
+        plotsInFlorest[_correspondingFlorest].push(Plot(plot.localization,plot.plotAge,plot.plotPlantingYear,plot.plotCutYear,plot.woodTypeForPlot));
+        florest.plotId++;
     }
+}
 
-    //Plot storage _plot = plotsInFlorest[_correspondingFlorest][0];
-    //require(_plot. == _plot.woodTypeForPlot ) 
-    //create the plot
+//getter for number of plots in florest.
+function getCurrentPlotNumberinFlorest(uint8 _correspondingFlorest) external view returns(uint8) {
+    Florest storage florest = florestsInProperty[_correspondingFlorest];
+    return florest.plotId;
 }
 
 function getDefaultPlot( uint8 _correspondingFlorest) external view returns(Plot memory) {
