@@ -437,6 +437,11 @@
 						"internalType": "string",
 						"name": "assetPropertyRegistration",
 						"type": "string"
+					},
+					{
+						"internalType": "uint32",
+						"name": "tokenizedPercentage",
+						"type": "uint32"
 					}
 				],
 				"stateMutability": "view",
@@ -699,6 +704,11 @@
 								"internalType": "string",
 								"name": "assetPropertyRegistration",
 								"type": "string"
+							},
+							{
+								"internalType": "uint32",
+								"name": "tokenizedPercentage",
+								"type": "uint32"
 							}
 						],
 						"internalType": "struct COPF.Asset",
@@ -755,9 +765,9 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint8",
+						"internalType": "uint16",
 						"name": "",
-						"type": "uint8"
+						"type": "uint16"
 					}
 				],
 				"name": "florestsInProperty",
@@ -865,6 +875,11 @@
 								"internalType": "string",
 								"name": "assetPropertyRegistration",
 								"type": "string"
+							},
+							{
+								"internalType": "uint32",
+								"name": "tokenizedPercentage",
+								"type": "uint32"
 							}
 						],
 						"internalType": "struct COPF.Asset",
@@ -1371,6 +1386,11 @@
 								"internalType": "string",
 								"name": "assetPropertyRegistration",
 								"type": "string"
+							},
+							{
+								"internalType": "uint32",
+								"name": "tokenizedPercentage",
+								"type": "uint32"
 							}
 						],
 						"internalType": "struct COPF.Asset",
@@ -1625,11 +1645,11 @@
 			]
 		},
 		"COPF.sol": {
-			"keccak256": "0x88a3ba642c5efeaeaa60e30b9d88af743bae21e38c23d573e5f3b0fe2db6314b",
+			"keccak256": "0x0c83060e090b9734c04db1c686aca27ac0edb543b8d8716eaeae8fdc15951718",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://d864f96b56e911814abe1eb22eb97fc043b17bbfd864c433a5223d6e78bda880",
-				"dweb:/ipfs/QmeR22utD8h3oiFWM4bKY3Rqhp5APoU5XPFNoAbfNvvfTT"
+				"bzz-raw://66f76fcc3121b348c88797771ab3e65fdaba3a01cea30890e2697f96c0dd1031",
+				"dweb:/ipfs/Qmd4fiY8iHn7sLHQn34cqNVicvUSYtKp3pNc7pDDFTLVFp"
 			]
 		},
 		"hardhat/console.sol": {

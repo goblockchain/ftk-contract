@@ -49,7 +49,7 @@ uint32 public maxGlobalAllowedFlorestTokenizationPercentage = 80000; //it repres
 mapping(uint16 => Plot[]) plotsInFlorest;
 mapping(uint16 => Asset[]) public assetsInFlorest;
 //mapping(uint16 => Asset[]) public assetsInPlots;
-mapping(uint8 => Florest) public florestsInProperty;
+mapping(uint16 => Florest) public florestsInProperty;
 
 struct Florest {
     uint32 tokenizedPercentage;
@@ -77,6 +77,7 @@ struct Asset {
     AssetClassification class;
     bool isCurrentAssetAvailableForTransfer;
     string assetPropertyRegistration;
+    uint32 tokenizedPercentage; 
 }
 
     /*╔═════════════════════════════╗
@@ -172,13 +173,13 @@ function createAFlorest(
 // de cada floresta, não importando se essa contém um ou mais plots, pq os assets conterão 
 // as coordenadas do asset - que pode estar dentro, ou englobar vários plots.
 function createAsset(Asset memory asset, uint16 _correspondingFlorest, uint256[] memory ids, uint256[] memory amount) external {
-    //Florest storage florest = florestsInProperty[_correspondingFlorest];
     //validate if asset tokenization amount doesn't overflow florest's
-  
+    Florest storage florest = florestsInProperty[_correspondingFlorest];
+    require(asset.tokenizedPercentage <= florest.tokenizationPercentageGivenToFlorest,"not allowed %");
     // validate if geographic location of different assets is the same
     console.log("id1", assetId);
     if(assetId == 1){
-    assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
+    assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration,asset.tokenizedPercentage));
     } else {
         //segunda iteração, //below = 1
         console.log(assetsInFlorest[_correspondingFlorest].length);
@@ -187,7 +188,7 @@ function createAsset(Asset memory asset, uint16 _correspondingFlorest, uint256[]
             console.log(geo);
             require(keccak256(abi.encodePacked(asset.geographicLocation)) != keccak256(abi.encodePacked(geo)),"asset exists");
         }
-    assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
+    assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration,asset.tokenizedPercentage));
     }
     //mint
     _mintBatch(asset.currentTokenOwner, ids, amount,"");
