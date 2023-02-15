@@ -812,6 +812,72 @@
 			{
 				"inputs": [
 					{
+						"internalType": "uint16",
+						"name": "_correspondingFlorest",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint8",
+						"name": "_assetId",
+						"type": "uint8"
+					}
+				],
+				"name": "getAssetInFlorest",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "geographicLocation",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "buyOrSellContractLink",
+								"type": "string"
+							},
+							{
+								"internalType": "enum COPF.NegociationType",
+								"name": "assetTokenizationType",
+								"type": "uint8"
+							},
+							{
+								"internalType": "address",
+								"name": "initialOwner",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "currentTokenOwner",
+								"type": "address"
+							},
+							{
+								"internalType": "enum COPF.AssetClassification",
+								"name": "class",
+								"type": "uint8"
+							},
+							{
+								"internalType": "bool",
+								"name": "isCurrentAssetAvailableForTransfer",
+								"type": "bool"
+							},
+							{
+								"internalType": "string",
+								"name": "assetPropertyRegistration",
+								"type": "string"
+							}
+						],
+						"internalType": "struct COPF.Asset",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "uint8",
 						"name": "_correspondingFlorest",
 						"type": "uint8"
@@ -1559,11 +1625,11 @@
 			]
 		},
 		"COPF.sol": {
-			"keccak256": "0x4f7b2c7fdad00190f66c48ea5e851d98e45239f0d967fc68339dd0d68c5421cc",
+			"keccak256": "0x88a3ba642c5efeaeaa60e30b9d88af743bae21e38c23d573e5f3b0fe2db6314b",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://21cdd143e4c053bfd47e7806c094e6e37e3214453ac16efe2047421a062ce4ea",
-				"dweb:/ipfs/QmZTuE9bCYZ4hRFxF3sYRMhuot48GeJTUUPrTXrYJ88Zt6"
+				"bzz-raw://d864f96b56e911814abe1eb22eb97fc043b17bbfd864c433a5223d6e78bda880",
+				"dweb:/ipfs/QmeR22utD8h3oiFWM4bKY3Rqhp5APoU5XPFNoAbfNvvfTT"
 			]
 		},
 		"hardhat/console.sol": {

@@ -176,23 +176,30 @@ function createAsset(Asset memory asset, uint16 _correspondingFlorest, uint256[]
     //validate if asset tokenization amount doesn't overflow florest's
   
     // validate if geographic location of different assets is the same
+    console.log("id1", assetId);
     if(assetId == 1){
     assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
     } else {
-        console.log(assetId);
-        for(uint8 i = 0; i < (assetsInFlorest[_correspondingFlorest].length-1); i++){
+        //segunda iteração, //below = 1
+        console.log(assetsInFlorest[_correspondingFlorest].length);
+        for(uint8 i = 0; i < (assetsInFlorest[_correspondingFlorest].length); i++){
             string storage geo = assetsInFlorest[_correspondingFlorest][i].geographicLocation;
-            console.log("", geo);
+            console.log(geo);
             require(keccak256(abi.encodePacked(asset.geographicLocation)) != keccak256(abi.encodePacked(geo)),"asset exists");
-            assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
         }
+    assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
     }
     //mint
     _mintBatch(asset.currentTokenOwner, ids, amount,"");
     setApprovalToTransferAssets(asset.currentTokenOwner, msg.sender, true);
     //increase number of assets minted in property
     assetId++;
-    console.log(assetId);
+    console.log("id", assetId);
+    console.log(assetsInFlorest[_correspondingFlorest].length);
+}
+
+function getAssetInFlorest(uint16 _correspondingFlorest, uint8 _assetId) external view returns(Asset memory){
+    return assetsInFlorest[_correspondingFlorest][_assetId];
 }
 
 //create florest
