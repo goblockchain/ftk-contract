@@ -160,6 +160,8 @@ contrato de compra e venda é de cada lote; o data room será sobre a propriedad
 o contrato de compra e venda é do lote que foi comprado
 
 Make florest mapping start at 1;
+
+function to reset tokenization amount for a florest - to be increased over years. 
 function Tokenização feita por florest
 function Tokenização feita por proprietário
 
@@ -174,7 +176,7 @@ validate 80% tokenization rule
 
 How to encode arguments in a struct call:
 To create an asset, for example:
-[coordenadas, url, 2021, 2028, link, 133,"0x5B38Da6a701c568545dCfcB03FcB875f56beddC4", "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4",165,false,"link"]
+["xyzwf","link",0,"0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2","0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2",0,true,"url"]
 
 struct Florest {
     Plot[] plotsInFlorest;

@@ -178,15 +178,15 @@ function createAFlorest(
 function createAsset(uint32 _tokenizedPercentage, Asset memory asset, uint16 _correspondingFlorest, uint256[] memory ids, uint256[] memory amount) external {
     //validate if asset tokenization amount doesn't overflow florest's
     Florest storage florest = florestsInProperty[_correspondingFlorest];
+    //validade if percentage isn't bigger than one given to florest.
     require(_tokenizedPercentage <= florest.tokenizationPercentageGivenToFlorest,"not allowed %");
+    //require(_tokenizedPercentage <= tokenizedPercentagesOfAssetsInFlorest[_correspondingFlorest],"not allowed %");
     // validate if geographic location of different assets is the same
-    console.log("id1", assetId);
     if(assetId == 1){
     assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
     tokenizedPercentagesOfAssetsInFlorest[_correspondingFlorest].push(uint32(_tokenizedPercentage));
     } else {
         //segunda iteração, //below = 1
-        console.log(assetsInFlorest[_correspondingFlorest].length);
         for(uint8 i = 0; i < (assetsInFlorest[_correspondingFlorest].length); i++){
             string storage geo = assetsInFlorest[_correspondingFlorest][i].geographicLocation;
             console.log(geo);
@@ -195,8 +195,9 @@ function createAsset(uint32 _tokenizedPercentage, Asset memory asset, uint16 _co
     assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
     tokenizedPercentagesOfAssetsInFlorest[_correspondingFlorest].push(uint32(_tokenizedPercentage));
     }
-    //validate if asset tokenization amount doesn't overflow 80000
-    doesPercentagesObeyUniversalRule(uint16(_correspondingFlorest));
+    ////validate if asset tokenization amount doesn't overflow 80000
+    require(doesPercentagesObeyUniversalRule(uint16(_correspondingFlorest)), "80%");
+    //doesPercentagesObeyUniversalRule(uint16(_correspondingFlorest));
     //mint
     _mintBatch(asset.currentTokenOwner, ids, amount,"");
     setApprovalToTransferAssets(asset.currentTokenOwner, msg.sender, true);
@@ -208,6 +209,7 @@ function createAsset(uint32 _tokenizedPercentage, Asset memory asset, uint16 _co
 
 function doesPercentagesObeyUniversalRule(uint16 _florest) internal view returns(bool) {
     Florest storage florest = florests[_florest];
+    //uint32[] storage percentages = tokenizedPercentagesOfAssetsInFlorest[_florest];
     uint32[] storage percentages = tokenizedPercentagesOfAssetsInFlorest[_florest];
     uint32 sumOfPercentages;
     for (uint8 i=0; i<percentages.length; i++) {
