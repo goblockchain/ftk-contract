@@ -163,13 +163,14 @@ Make florest mapping start at 1;
 function Tokenização feita por florest
 function Tokenização feita por proprietário
 
+//If contract sizes or stack too deep error:
+create two contracts...
 One function to:
 set the tokenizationType
-function to set the value by which asset was sold
 setter of currentOwner of asset
-getter for an asset inside a florest
+validate 80% tokenization rule
 
-getter for plots that aren't the first plots in florest.
+
 
 How to encode arguments in a struct call:
 To create an asset, for example:

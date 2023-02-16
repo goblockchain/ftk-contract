@@ -437,11 +437,6 @@
 						"internalType": "string",
 						"name": "assetPropertyRegistration",
 						"type": "string"
-					},
-					{
-						"internalType": "uint32",
-						"name": "tokenizedPercentage",
-						"type": "uint32"
 					}
 				],
 				"stateMutability": "view",
@@ -664,6 +659,11 @@
 			{
 				"inputs": [
 					{
+						"internalType": "uint32",
+						"name": "_tokenizedPercentage",
+						"type": "uint32"
+					},
+					{
 						"components": [
 							{
 								"internalType": "string",
@@ -704,11 +704,6 @@
 								"internalType": "string",
 								"name": "assetPropertyRegistration",
 								"type": "string"
-							},
-							{
-								"internalType": "uint32",
-								"name": "tokenizedPercentage",
-								"type": "uint32"
 							}
 						],
 						"internalType": "struct COPF.Asset",
@@ -875,11 +870,6 @@
 								"internalType": "string",
 								"name": "assetPropertyRegistration",
 								"type": "string"
-							},
-							{
-								"internalType": "uint32",
-								"name": "tokenizedPercentage",
-								"type": "uint32"
 							}
 						],
 						"internalType": "struct COPF.Asset",
@@ -1386,11 +1376,6 @@
 								"internalType": "string",
 								"name": "assetPropertyRegistration",
 								"type": "string"
-							},
-							{
-								"internalType": "uint32",
-								"name": "tokenizedPercentage",
-								"type": "uint32"
 							}
 						],
 						"internalType": "struct COPF.Asset",
@@ -1411,6 +1396,30 @@
 				"name": "tokenizeAssetInFlorest",
 				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint16",
+						"name": "",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "tokenizedPercentagesOfAssetsInFlorest",
+				"outputs": [
+					{
+						"internalType": "uint32",
+						"name": "",
+						"type": "uint32"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -1645,11 +1654,11 @@
 			]
 		},
 		"COPF.sol": {
-			"keccak256": "0x0c83060e090b9734c04db1c686aca27ac0edb543b8d8716eaeae8fdc15951718",
+			"keccak256": "0x789d6f5b17619d84f3aaeace3abc70c69d1e54c24f07a3d99bda30d9e8c9f454",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://66f76fcc3121b348c88797771ab3e65fdaba3a01cea30890e2697f96c0dd1031",
-				"dweb:/ipfs/Qmd4fiY8iHn7sLHQn34cqNVicvUSYtKp3pNc7pDDFTLVFp"
+				"bzz-raw://8d7c86859efbcfac65195b58c91480728c15be7a0a81d4c9590125575b39748e",
+				"dweb:/ipfs/QmUABPRfyRpxwrxAEBRKvFXDPvA1vyCKXDVyhu1NCyc2vy"
 			]
 		},
 		"hardhat/console.sol": {
