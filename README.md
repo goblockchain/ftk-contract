@@ -163,7 +163,7 @@ Cada NFT terá uma matrícula ou haverá uma matrícula só em relação ao COPF
 Cada lote terá a informação da matrícula da propriedade?
 O link do Data Room terá o link do valuation ou serão links independentes?
 
-### Notes
+### Notes For @devs
 contrato de compra e venda é de cada lote; o data room será sobre a propriedade e o contrato de tokenizaçao sera da propriedade (todas as florestas que ela contem)
 o contrato de compra e venda é do lote que foi comprado
 
@@ -216,11 +216,3 @@ struct Plot {
     uint16 plotPlantingYear;
     uint16 plotCutYear;
 }
-
-    mapping (uint => Campaign) campaigns;
-
-    function newCampaign(address payable beneficiary, uint goal) public returns (uint campaignID) {
-        campaignID = numCampaigns++; // campaignID is return variable
-        Campaign storage c = campaigns[campaignID];
-        c.beneficiary = beneficiary;
-        c.fundingGoal = goal;
