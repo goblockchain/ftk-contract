@@ -31,8 +31,6 @@ uint8 public assetId = 1;
 uint8 florestId = 1;
 uint16 public currentYear = 2023;
 
-//mapping (uint8 => string) private _tokenURIs;
-
 bool isCurrentAssetAvailableForTransfer = false;
 
 enum WoodType {PINUS, EUCALIPTO}
@@ -50,7 +48,6 @@ mapping(uint16 => Plot[]) plotsInFlorest;
 mapping(uint16 => Asset[]) public assetsInFlorest;
 //assetId => florestId
 mapping(uint16 => uint16) public assetsQuantityInFlorest;
-//mapping(uint16 => Asset[]) public assetsInPlots;
 mapping(uint16 => Florest) public florestsInProperty;
 mapping(uint16 => uint32[]) public tokenizedPercentagesOfAssetsInFlorest;
 
@@ -65,9 +62,9 @@ struct Florest {
 
 struct Plot {
     string localization;
-    uint16 plotAge;
-    uint16 plotPlantingYear;
-    uint16 plotCutYear;
+    uint64 plotAge;
+    uint64 plotPlantingYear;
+    uint64 plotCutYear;
     WoodType woodTypeForPlot; 
 }
 
@@ -81,8 +78,6 @@ struct Asset {
     AssetClassification class;
     bool isCurrentAssetAvailableForTransfer;
     string assetPropertyRegistration;
-    //uint32 tokenizedPercentage; 
-    //mapping(uint8 => uint32[]) tokenizedPercentageOfAsset; //não teria que ser global?
 }
 
     /*╔═════════════════════════════╗
@@ -116,40 +111,15 @@ struct Asset {
       ║            EVENTS           ║
       ╚═════════════════════════════╝*/
     /**********************************/
-    /*╔═════════════════════════════╗
-      ║          MODIFIERS          ║
-      ╚═════════════════════════════╝*/
-    /**********************************/
-
-//modifier isAccountInitialAssetOwner(uint8 _assetId, address _initialOwner) {
-//    require(_initialOwner == assets[_assetId].initialOwner, "Only florest's initial owner is allowed for this tx");
-//    _;
-//}
-
-// modifier hasProjectEnded(uint8 _assetId){
-//     require(this.currentYear() <= plots[_assetId].projectEnd, "project is still ongoing!");
-//     _;
-// }
-    /*╔═════════════════════════════╗
-      ║             END             ║
-      ║          MODIFIERS          ║
-      ╚═════════════════════════════╝*/
-    /**********************************/
 constructor(
-    address _initialOwner,
-    address _minter,
-    uint256[] memory _ids,
-    uint256[] memory _amount
+    address _minter
     ) ERC1155("https://game.example/api/item/{id}.json") GoTokensRoles(msg.sender, _minter) {
-    //console.log(assetId);
-    //_mintBatch(_initialOwner, _ids, _amount, "mint");
-    //setApprovalToTransferAssets(_initialOwner, msg.sender, true);
 }
 
 uint32 public woodPropertyMaxPotential;
 
     /*╔══════════════════════════════╗
-      ║       SET FUNCTIONS          ║
+      ║       CREATE FUNCTIONS       ║
       ╚══════════════════════════════╝*/
 
 function createAFlorest(
@@ -167,6 +137,66 @@ function createAFlorest(
     florest.tokenizationPercentageGivenToFlorest.push(_tokenizationPercentageGivenToFlorest);
     florestId++; 
     return florestId;
+}
+
+function createAsset(uint32 _tokenizedPercentage, Asset memory asset, uint16 _correspondingFlorest, uint256[] memory ids, uint256[] memory amount) external {
+    //validate woodTypeForAsset is equal of florest's
+    Florest storage florest = florestsInProperty[_correspondingFlorest];
+    require(asset.woodTypeForAsset == florest.woodTypeForFlorest, "diff wood");
+    uint16 assetIdInCurrentFlorest = assetsQuantityInFlorest[_correspondingFlorest];
+    console.log("AIICF", assetIdInCurrentFlorest);
+    //validade if percentage isn't bigger than one given to florest.
+    require(_tokenizedPercentage <= getAllowedPercentagesOfTokenizationForAFlorest(_correspondingFlorest, assetIdInCurrentFlorest),"not allowed %");
+    // validate if geographic location of different assets is the same
+    if(assetIdInCurrentFlorest == 1){
+    assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.woodTypeForAsset,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
+    tokenizedPercentagesOfAssetsInFlorest[_correspondingFlorest].push(uint32(_tokenizedPercentage));
+    } else {
+        for(uint8 i = 0; i < (assetsInFlorest[_correspondingFlorest].length); i++){
+            string storage geo = assetsInFlorest[_correspondingFlorest][i].geographicLocation;
+            console.log(geo);
+            require(keccak256(abi.encodePacked(asset.geographicLocation)) != keccak256(abi.encodePacked(geo)),"asset exists");
+        }
+    assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.woodTypeForAsset,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
+    tokenizedPercentagesOfAssetsInFlorest[_correspondingFlorest].push(uint32(_tokenizedPercentage));
+    }
+    ////validate if asset tokenization amount doesn't overflow 80000
+    require(doesPercentagesObeyUniversalRule(uint16(_correspondingFlorest)), "80%+");
+    //mint
+    _mintBatch(asset.currentTokenOwner, ids, amount,"");
+    setApprovalToTransferAssets(asset.currentTokenOwner, msg.sender, true);
+    //increase number of assets minted in property
+    assetIdInCurrentFlorest++;
+}
+
+function createAPlot(
+    Plot memory plot,
+    uint8 _correspondingFlorest
+) external returns(Plot memory)
+{
+    Florest storage florest = florestsInProperty[_correspondingFlorest];
+    //validate florest's number of plots
+    require((florest.plotId + 1) <= florest.plotsQuantityInCurrentFlorest,"exceeded");
+    require(florest.woodTypeForFlorest == plot.woodTypeForPlot,"diffwood");
+    //validate type of florest's wood type with plot's wood type
+    if(florest.plotId == 0) {
+        plotsInFlorest[_correspondingFlorest].push(Plot(plot.localization,plot.plotAge,plot.plotPlantingYear,plot.plotCutYear,plot.woodTypeForPlot));
+        florest.plotId++;
+    } else {
+        Plot storage _plot = plotsInFlorest[_correspondingFlorest][0];
+        //validate plot's wood with florest's wood
+        require(plot.woodTypeForPlot == _plot.woodTypeForPlot, "wood type naif"); //naif = not accepted in florest
+        //validate plot's age and localization 
+        require(plot.plotAge == _plot.plotAge, "plot age naif");
+        for(uint8 i = 0; i < (plotsInFlorest[_correspondingFlorest].length); i++){
+            string storage plotLocalization = plotsInFlorest[_correspondingFlorest][i].localization;
+            console.log(plotLocalization);
+            require(keccak256(abi.encodePacked(plotLocalization)) != keccak256(abi.encodePacked(plot.localization)),"plot exists");
+    }
+    //create plot
+    plotsInFlorest[_correspondingFlorest].push(Plot(plot.localization,plot.plotAge,plot.plotPlantingYear,plot.plotCutYear,plot.woodTypeForPlot));
+    florest.plotId++;
+    }
 }
 
 //function to reset tokenization amount for a florest - to be increased over years.
@@ -218,66 +248,11 @@ function getExternalAllowedPercentagesOfTokenizationForAFlorest(uint16 _correspo
     uint32[] storage percentagesGiven = florest.tokenizationPercentageGivenToFlorest;
     return percentagesGiven;
 }
-// uma floresta pode ter vários assets dentro dela.
-// um asset pode estar dividido entre vários plots
-// não se tokeniza plots, mas sim florests
-// um asset não pode estar em duas florestas, pois florestas diferentes não têm a mesma idade.
-// como o asset já tem sua localização especificada, o resto é dispensável
-// pelas regras acima, numa propriedade, há várias florestas e podemos dar um push dentro
-// de cada floresta, não importando se essa contém um ou mais plots, pq os assets conterão 
-// as coordenadas do asset - que pode estar dentro, ou englobar vários plots.
-// uma floresta pode ter vários lotes. A soma da tokenização dos lotes não pode ultrapassar 80000
 
 
-//getter for amount given to florest over the years
-//validation on update florest's tokenizationGiven
-
-    // uint32 tokenizedPercentage;
-    // WoodType woodTypeForFlorest; 
-    // uint16 plotsQuantityInCurrentFlorest;
-    // uint32[] tokenizationPercentageGivenToFlorest;
-    // AssetClassification class;
-    // uint8 plotId;
-
-
-//validate if it's the first asset?
-function createAsset(uint32 _tokenizedPercentage, Asset memory asset, uint16 _correspondingFlorest, uint256[] memory ids, uint256[] memory amount) external {
-    //validate woodTypeForAsset is equal of florest's
-    Florest storage florest = florestsInProperty[_correspondingFlorest];
-    require(asset.woodTypeForAsset == florest.woodTypeForFlorest, "diff wood");
-    uint16 assetIdInCurrentFlorest = assetsQuantityInFlorest[_correspondingFlorest];
-    console.log("AIICF", assetIdInCurrentFlorest);
-    //validade if percentage isn't bigger than one given to florest.
-    require(_tokenizedPercentage <= getAllowedPercentagesOfTokenizationForAFlorest(_correspondingFlorest, assetIdInCurrentFlorest),"not allowed %");
-    //require(_tokenizedPercentage <= getAllowedPercentagesOfTokenizationForAFlorest(_correspondingFlorest)[assetId],"not allowed %");
-    // validate if geographic location of different assets is the same
-    if(assetIdInCurrentFlorest == 1){
-    assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.woodTypeForAsset,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
-    tokenizedPercentagesOfAssetsInFlorest[_correspondingFlorest].push(uint32(_tokenizedPercentage));
-    } else {
-        for(uint8 i = 0; i < (assetsInFlorest[_correspondingFlorest].length); i++){
-            string storage geo = assetsInFlorest[_correspondingFlorest][i].geographicLocation;
-            console.log(geo);
-            require(keccak256(abi.encodePacked(asset.geographicLocation)) != keccak256(abi.encodePacked(geo)),"asset exists");
-        }
-    assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.woodTypeForAsset,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
-    tokenizedPercentagesOfAssetsInFlorest[_correspondingFlorest].push(uint32(_tokenizedPercentage));
-    }
-    ////validate if asset tokenization amount doesn't overflow 80000
-    require(doesPercentagesObeyUniversalRule(uint16(_correspondingFlorest)), "80%+");
-    //doesPercentagesObeyUniversalRule(uint16(_correspondingFlorest));
-    //mint
-    _mintBatch(asset.currentTokenOwner, ids, amount,"");
-    setApprovalToTransferAssets(asset.currentTokenOwner, msg.sender, true);
-    //increase number of assets minted in property
-    assetIdInCurrentFlorest++;
-    console.log("id", assetId);
-    console.log(assetsInFlorest[_correspondingFlorest].length);
-}
 
 function doesPercentagesObeyUniversalRule(uint16 _florest) internal view returns(bool) {
     Florest storage florest = florests[_florest];
-    //uint32[] storage percentages = tokenizedPercentagesOfAssetsInFlorest[_florest];
     uint32[] storage percentages = tokenizedPercentagesOfAssetsInFlorest[_florest];
     uint32 sumOfPercentages;
     for (uint8 i=0; i<percentages.length; i++) {
@@ -290,76 +265,9 @@ function getAssetInFlorest(uint16 _correspondingFlorest, uint8 _assetId) externa
     return assetsInFlorest[_correspondingFlorest][_assetId];
 }
 
-//create florest
-//create asset
-//check balanceOf
-//try to transfer using safeTransferFrom
-// struct Asset {
-//     string geographicLocation;
-//     string buyOrSellContractLink;
-//     NegociationType assetTokenizationType;
-//     address initialOwner;
-//     address currentTokenOwner;
-//     AssetClassification class;
-//     bool isCurrentAssetAvailableForTransfer;
-//     string assetPropertyRegistration;
-// }
-
-// function createAsset(Asset memory _asset) internal {
-    
-//     Asset storage asset = assetsInPlots[][assetId];
-//     asset.geographicLocation = _asset.geographicLocation;
-//     asset.buyOrSellContractLink = _asset.buyOrSellContractLink;
-//     asset.assetTokenizationType = _asset.assetTokenizationType;
-//     asset.initialOwner = _asset.initialOwner;
-//     asset.currentTokenOwner = _asset.currentTokenOwner;
-//     asset.class = _asset.class;
-//     asset.isCurrentAssetAvailableForTransfer = _asset.isCurrentAssetAvailableForTransfer;
-//     asset.assetPropertyRegistration = _asset.assetPropertyRegistration;
-//     //mint function
-// }
-
-function tokenizeAssetInFlorest(Asset memory _asset,uint32 _tokenizePercentage, uint8 _correspondingFlorest) external {
-    //get florest
-    //Florest storage florest = florestsInProperty[_correspondingFlorest];
-    //checks tokenization is smaller than universal rule
-    //checks tokenization is smaller than allowed tokenization
-    //require(_tokenizePercentage <= florest.tokenizationPercentageGivenToFlorest, "florest not allowed to tokenize this amount");
-    //florest.tokenizedPercentage = _tokenizePercentage;
-    //create an asset with the tokenizePercentage
-    //call another function to create the asset
-    //createAsset(_asset);
-}
-
 function getPlot(uint8 _correspondingFlorest, uint16 _correspondingPlot) external view returns(Plot memory) {
-        //Florest storage correspondingFlorest = florestsInProperty[_correspondingFlorest];
         Plot storage plot = plotsInFlorest[_correspondingFlorest][_correspondingPlot];
         return plot;
-}
-
-function createAPlot(
-    Plot memory plot,
-    uint8 _correspondingFlorest
-) external returns(Plot memory)
-{
-    Florest storage florest = florestsInProperty[_correspondingFlorest];
-    //validate florest's number of plots
-    require((florest.plotId + 1) <= florest.plotsQuantityInCurrentFlorest,"exceeded");
-    require(florest.woodTypeForFlorest == plot.woodTypeForPlot,"diffwood");
-    //validate type of florest's wood type with plot's wood type
-    if(florest.plotId == 0) {
-        plotsInFlorest[_correspondingFlorest].push(Plot(plot.localization,plot.plotAge,plot.plotPlantingYear,plot.plotCutYear,plot.woodTypeForPlot));
-        florest.plotId++;
-    } else {
-        Plot storage _plot = plotsInFlorest[_correspondingFlorest][0];
-        //validate plot's wood with florest's wood
-        require(plot.woodTypeForPlot == _plot.woodTypeForPlot, "wood type naif"); //naif = not accepted in florest
-        //validate plot's age and woodType
-        require(plot.plotAge == _plot.plotAge, "plot age naif");
-        //create plot
-        plotsInFlorest[_correspondingFlorest].push(Plot(plot.localization,plot.plotAge,plot.plotPlantingYear,plot.plotCutYear,plot.woodTypeForPlot));
-        florest.plotId++;
-    }
 }
 
 // function to reset number of plots in florest
@@ -378,89 +286,20 @@ function getDefaultPlot( uint8 _correspondingFlorest) external view returns(Plot
     Plot storage _plot = plotsInFlorest[_correspondingFlorest][0];
     return _plot;
 }
-    /*╔══════════════════════════════╗
-      ║     CHECK FUNCTIONS          ║
-      ╚══════════════════════════════╝*/
-//function getPlotsInFlorest(uint16 _florestId) external view returns(Plot[] memory) {
-//    return florests[_florestId].plotsInFlorest;
-//}
-
-//function getAgeAndWoodTypeForAFlorest(uint8 _correspondingFlorest) external view returns(uint16, uint16){
-//    Florest storage correspondingFlorest = florests[_correspondingFlorest];
-//
-//    uint16 correctAgeForPlotsInFlorest = correspondingFlorest.plotsInFlorest[0].plotAge;
-//    uint16 correctWoodTypeForPlotsInFlorest = uint16(correspondingFlorest.plotsInFlorest[0].woodTypeForPlot);
-//    return (correctAgeForPlotsInFlorest, correctWoodTypeForPlotsInFlorest);
-//}
       
 function checkOwnership() public view returns(address) {
     return owner();
 }
-    
-// function isAssetAvailableForTransfer(uint8 _assetId) internal view returns(bool){
-//         Asset[] storage asset = assetsInPlots[_assetId];
-//         return asset[assetId].isCurrentAssetAvailableForTransfer;
-// }
 
 function setCurrentYear(uint16 _currentYear) external onlyRole(MINTER_ROLE) {
         currentYear = _currentYear;
 }
 
-// function setAssetAvailabilityForTransfer(uint8 _assetId, bool _availability) external returns(bool) {
-//         Asset[] storage asset = assetsInPlots[_assetId];
-//         asset[assetId].isCurrentAssetAvailableForTransfer = _availability;
-//         assetId++;
-//         return asset[_assetId].isCurrentAssetAvailableForTransfer;
-// }
-
-// make the function available for future mints of other asset in the same florest 
-function mint(
-    // _tokenizedPercentage,
-    // _geographicLocation,
-    // _assetImage,
-    // _woodTypeForAsset,
-    // _assetAge,
-    // _assetPlantingYear,
-    // _assetCutYear,
-    // _assetTokenizationType,
-    // _soldByTheValueOf,
-    address _initialOwner,
-    // _currentTokenOwner,
-    // _class,
-    // _AssetValuation,
-    // _isCurrentAssetAvailableForTransfer,
-    uint256[] calldata ids, 
-    uint256[] calldata amounts
-    )
- onlyRole(MINTER_ROLE) 
- external {
-    uint8 _assetId = assetId++;
-    
-
-    //
-    _mintBatch(_initialOwner, ids, amounts, "minting");
-    
-    setApprovalToTransferAssets(_initialOwner, msg.sender, true);
-}
-
 function setApprovalToTransferAssets(address holderAccount, address operator, bool approved)
     internal onlyRole(MINTER_ROLE)
 {
-    //The setApprovalForAll() function is used to assign or revoke the full approval rights to the given operator.
-    //The caller of the function (msg.sender) is the approver.
     _setApprovalForAll(holderAccount, operator, approved);
 } 
-
-
-//This function needs to be invoked whenever the TED  transfer has been done
-//function transferAsset(uint8 _assetId, address _newOwner, uint256 _amount) external {
-    //require(isAssetAvailableForTransfer(_assetId), "asset is currently not available for transfer");
-    //address pastOwner = assets[_assetId].tokenOwner;
-    //setApprovalToTransferAssets(pastOwner, msg.sender, true);
-    //safeTransferFrom(pastOwner, _newOwner, _assetId, _amount, "transfer");
-    //assets[_assetId].tokenOwner = _newOwner;
-    //emit AssetTransferred(_assetId, _newOwner, assets[_assetId].tokenOwner == _newOwner);
-//}
 
 //function declared to avoid the below compilation error:
 //TypeError: Derived contract must override function "supportsInterface". Two or more base classes define function with same name and parameter types.

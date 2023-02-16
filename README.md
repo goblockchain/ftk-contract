@@ -183,7 +183,14 @@ setter of currentOwner of asset
 validate 80% tokenization rule
 
 
-Check auction contract and number 10000 usage.
+//To do
+//Check auction contract and number 10000 usage.
+check how I will put the age in MM/YYYY
+transfer function
+burn function
+setavailabilityforAssetToBeTransferred
+
+
 How to encode arguments in a struct call:
 To create an asset, for example:
 ["xyzwf",1,"link",0,"0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2","0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2",0,true,"url"]
