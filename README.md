@@ -51,19 +51,27 @@ Devido a alguns fatores, a FTK me permitiu tokenizar até 40% da floresta 1. Dec
 Para a floresta 2, a FTK me liberou 25%. Decidi tokenizar 10% desse agrupamento. Esse é meu segundo Lote.
 
 Primeira Rodada:
-1° Floresta = 40% liberado ✓
-2° Floresta = 25% liberado ✓ 
+1° Floresta = 40% liberado ✓*
+2° Floresta = 25% liberado ✓ *
+SC creates florests ✓ createAFlorest*
+SC creates plots ✓ createAPlot*
+SC creates asset ✓ 30% florest1 createAsset*
+SC creates asset ✓ 10% florest2 createAsset*
 
-Ano que vem, decidi começar outra rodada de tokenizacão. A FTK me liberou 20% a mais em cada floresta. Dessa forma, no primeira floresta, terei 60% liberado para tokenizacão e, para a segunda floresta, 45% liberado para tokenização.
+Ano que vem, decidi começar outra rodada de tokenizacão. A FTK me liberou 20% a mais em cada floresta. Dessa forma, no primeira floresta, terei 60% liberado para tokenizacão e, para a segunda floresta, 45% liberado para tokenização. TOkenizei +10% da floresta 1 e mais 10% da floresta 2.
 
 Ano 2:
-1° Floresta = 20% liberado ✓
-2° Floresta = 20% liberado ✓
- 
+1° Floresta = 20% liberado ✓ updateFlorest*
+2° Floresta = 20% liberado ✓ updateFlorest*
+SC creates second asset(Florest1) ✓ createAsset*
+SC creates second asset(Florest1) ✓ createAsset*
+
 Numa terceira rodada de tokenizacão, a FTK
 liberou mais 25% de tokenizacão para a primeira floresta. 🟥 Opa, mas isso é IMPOSSÍVEL, pois eu já estaria, no total, tokenizando 85% da minha primeira floresta (40+20+25= 85%). Para a segunda floresta, foi liberado também 25%, o que faz com que o segundo talhão tenha 45+25=70%, no total, liberado para tokenização.
 
 Ano 3:
+updateFlorest ✓ failing to infringe 80% rule for florest1
+updateFlorest ✓ correctly creating for florest2
 1° Floresta = 25% liberado ✓  🟥  (Impossível)
 2° Floresta = 25% liberado ✓
 
@@ -162,6 +170,8 @@ o contrato de compra e venda é do lote que foi comprado
 Make florest mapping start at 1;
 
 function to reset tokenization amount for a florest - to be increased over years. 
+getter for amount given to florest over the years
+validation on update florest's tokenizationGiven
 function Tokenização feita por florest
 function Tokenização feita por proprietário
 
@@ -173,10 +183,11 @@ setter of currentOwner of asset
 validate 80% tokenization rule
 
 
-
+Check auction contract and number 10000 usage.
 How to encode arguments in a struct call:
 To create an asset, for example:
-["xyzwf","link",0,"0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2","0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2",0,true,"url"]
+["xyzwf",1,"link",0,"0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2","0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2",0,true,"url"]
+
 
 struct Florest {
     Plot[] plotsInFlorest;

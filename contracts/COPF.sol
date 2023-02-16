@@ -48,6 +48,8 @@ uint32 public maxGlobalAllowedFlorestTokenizationPercentage = 80000; //it repres
 
 mapping(uint16 => Plot[]) plotsInFlorest;
 mapping(uint16 => Asset[]) public assetsInFlorest;
+//assetId => florestId
+mapping(uint16 => uint16) public assetsQuantityInFlorest;
 //mapping(uint16 => Asset[]) public assetsInPlots;
 mapping(uint16 => Florest) public florestsInProperty;
 mapping(uint16 => uint32[]) public tokenizedPercentagesOfAssetsInFlorest;
@@ -56,7 +58,7 @@ struct Florest {
     uint32 tokenizedPercentage;
     WoodType woodTypeForFlorest; 
     uint16 plotsQuantityInCurrentFlorest;
-    uint32 tokenizationPercentageGivenToFlorest;
+    uint32[] tokenizationPercentageGivenToFlorest;
     AssetClassification class;
     uint8 plotId;
 }
@@ -71,6 +73,7 @@ struct Plot {
 
 struct Asset {
     string geographicLocation;
+    WoodType woodTypeForAsset;
     string buyOrSellContractLink;
     NegociationType assetTokenizationType;
     address initialOwner;
@@ -161,11 +164,60 @@ function createAFlorest(
     florest.woodTypeForFlorest = _woodTypeForFlorest;
     florest.plotsQuantityInCurrentFlorest = _plotsQuantityInCurrentFlorest;
     florest.tokenizedPercentage = 0;
-    florest.tokenizationPercentageGivenToFlorest = _tokenizationPercentageGivenToFlorest;
-
+    florest.tokenizationPercentageGivenToFlorest.push(_tokenizationPercentageGivenToFlorest);
+    florestId++; 
     return florestId;
 }
 
+//function to reset tokenization amount for a florest - to be increased over years.
+function updateFlorest(
+    uint16 _plotsQuantityInCurrentFlorest,
+    uint32 _tokenizationPercentageGivenToFlorest,
+    WoodType _woodTypeForFlorest,
+    uint16 _florestToUpdate
+) external onlyOwner returns(uint16) {
+    require(_tokenizationPercentageGivenToFlorest <= 80000, "80% rule");
+    Florest storage florest = florestsInProperty[_florestToUpdate]; 
+    florest.woodTypeForFlorest = _woodTypeForFlorest;
+    florest.plotsQuantityInCurrentFlorest = _plotsQuantityInCurrentFlorest;
+    florest.tokenizedPercentage = getTokenizedPercentagesSumForAFlorest(_florestToUpdate); //function to get assets sum
+    console.log(getTokenizedPercentagesSumForAFlorest(_florestToUpdate));
+    florest.tokenizationPercentageGivenToFlorest.push(_tokenizationPercentageGivenToFlorest);
+    require(getAllowedSumPercentagesOfTokenizationForAFlorest(_florestToUpdate) <= 80000,"80%");
+}
+
+function getTokenizedPercentagesSumForAFlorest (uint16 _correspondingFlorest) internal view returns(uint32) {
+    uint32[] storage percentages = tokenizedPercentagesOfAssetsInFlorest[_correspondingFlorest];
+    uint32 sumOfPercentages;
+    for (uint8 i=0; i<percentages.length; i++) {
+    sumOfPercentages += tokenizedPercentagesOfAssetsInFlorest[_correspondingFlorest][i];
+    }
+    return sumOfPercentages;
+}
+
+// get tokenization percentage that WAS GIVEN to florest over each round of tokenization
+// check that in that specific round, this is the max allowed % given.
+function getAllowedPercentagesOfTokenizationForAFlorest(uint16 _correspondingFlorest, uint16 _assetId) internal view returns(uint32){
+    Florest storage florest = florestsInProperty[_correspondingFlorest]; 
+    uint32[] storage percentagesGiven = florest.tokenizationPercentageGivenToFlorest;
+    return percentagesGiven[_assetId];
+}
+
+function getAllowedSumPercentagesOfTokenizationForAFlorest(uint16 _correspondingFlorest) internal view returns(uint32) {
+    Florest storage florest = florestsInProperty[_correspondingFlorest];
+    uint32[] storage percentagesGiven = florest.tokenizationPercentageGivenToFlorest;
+    uint32 sumOfAllowedPercentages;
+    for( uint8 i = 0; i < percentagesGiven.length; i++){
+        sumOfAllowedPercentages += florest.tokenizationPercentageGivenToFlorest[i];
+    }
+    return sumOfAllowedPercentages;
+}
+
+function getExternalAllowedPercentagesOfTokenizationForAFlorest(uint16 _correspondingFlorest) external view returns(uint32[] memory) {
+    Florest storage florest = florestsInProperty[_correspondingFlorest];
+    uint32[] storage percentagesGiven = florest.tokenizationPercentageGivenToFlorest;
+    return percentagesGiven;
+}
 // uma floresta pode ter vários assets dentro dela.
 // um asset pode estar dividido entre vários plots
 // não se tokeniza plots, mas sim florests
@@ -175,34 +227,50 @@ function createAFlorest(
 // de cada floresta, não importando se essa contém um ou mais plots, pq os assets conterão 
 // as coordenadas do asset - que pode estar dentro, ou englobar vários plots.
 // uma floresta pode ter vários lotes. A soma da tokenização dos lotes não pode ultrapassar 80000
+
+
+//getter for amount given to florest over the years
+//validation on update florest's tokenizationGiven
+
+    // uint32 tokenizedPercentage;
+    // WoodType woodTypeForFlorest; 
+    // uint16 plotsQuantityInCurrentFlorest;
+    // uint32[] tokenizationPercentageGivenToFlorest;
+    // AssetClassification class;
+    // uint8 plotId;
+
+
+//validate if it's the first asset?
 function createAsset(uint32 _tokenizedPercentage, Asset memory asset, uint16 _correspondingFlorest, uint256[] memory ids, uint256[] memory amount) external {
-    //validate if asset tokenization amount doesn't overflow florest's
+    //validate woodTypeForAsset is equal of florest's
     Florest storage florest = florestsInProperty[_correspondingFlorest];
+    require(asset.woodTypeForAsset == florest.woodTypeForFlorest, "diff wood");
+    uint16 assetIdInCurrentFlorest = assetsQuantityInFlorest[_correspondingFlorest];
+    console.log("AIICF", assetIdInCurrentFlorest);
     //validade if percentage isn't bigger than one given to florest.
-    require(_tokenizedPercentage <= florest.tokenizationPercentageGivenToFlorest,"not allowed %");
-    //require(_tokenizedPercentage <= tokenizedPercentagesOfAssetsInFlorest[_correspondingFlorest],"not allowed %");
+    require(_tokenizedPercentage <= getAllowedPercentagesOfTokenizationForAFlorest(_correspondingFlorest, assetIdInCurrentFlorest),"not allowed %");
+    //require(_tokenizedPercentage <= getAllowedPercentagesOfTokenizationForAFlorest(_correspondingFlorest)[assetId],"not allowed %");
     // validate if geographic location of different assets is the same
-    if(assetId == 1){
-    assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
+    if(assetIdInCurrentFlorest == 1){
+    assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.woodTypeForAsset,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
     tokenizedPercentagesOfAssetsInFlorest[_correspondingFlorest].push(uint32(_tokenizedPercentage));
     } else {
-        //segunda iteração, //below = 1
         for(uint8 i = 0; i < (assetsInFlorest[_correspondingFlorest].length); i++){
             string storage geo = assetsInFlorest[_correspondingFlorest][i].geographicLocation;
             console.log(geo);
             require(keccak256(abi.encodePacked(asset.geographicLocation)) != keccak256(abi.encodePacked(geo)),"asset exists");
         }
-    assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
+    assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.woodTypeForAsset,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
     tokenizedPercentagesOfAssetsInFlorest[_correspondingFlorest].push(uint32(_tokenizedPercentage));
     }
     ////validate if asset tokenization amount doesn't overflow 80000
-    require(doesPercentagesObeyUniversalRule(uint16(_correspondingFlorest)), "80%");
+    require(doesPercentagesObeyUniversalRule(uint16(_correspondingFlorest)), "80%+");
     //doesPercentagesObeyUniversalRule(uint16(_correspondingFlorest));
     //mint
     _mintBatch(asset.currentTokenOwner, ids, amount,"");
     setApprovalToTransferAssets(asset.currentTokenOwner, msg.sender, true);
     //increase number of assets minted in property
-    assetId++;
+    assetIdInCurrentFlorest++;
     console.log("id", assetId);
     console.log(assetsInFlorest[_correspondingFlorest].length);
 }
@@ -253,11 +321,11 @@ function getAssetInFlorest(uint16 _correspondingFlorest, uint8 _assetId) externa
 
 function tokenizeAssetInFlorest(Asset memory _asset,uint32 _tokenizePercentage, uint8 _correspondingFlorest) external {
     //get florest
-    Florest storage florest = florestsInProperty[_correspondingFlorest];
+    //Florest storage florest = florestsInProperty[_correspondingFlorest];
     //checks tokenization is smaller than universal rule
     //checks tokenization is smaller than allowed tokenization
-    require(_tokenizePercentage <= florest.tokenizationPercentageGivenToFlorest, "florest not allowed to tokenize this amount");
-    florest.tokenizedPercentage = _tokenizePercentage;
+    //require(_tokenizePercentage <= florest.tokenizationPercentageGivenToFlorest, "florest not allowed to tokenize this amount");
+    //florest.tokenizedPercentage = _tokenizePercentage;
     //create an asset with the tokenizePercentage
     //call another function to create the asset
     //createAsset(_asset);
