@@ -221,11 +221,11 @@ function updateFlorest(
     /*╔══════════════════════════════╗
       ║          URI FUNCTIONS       ║
       ╚══════════════════════════════╝*/
-function setBaseURI(string memory _newBaseURI) public onlyOwner notFrozen {
+function setBaseURI(string memory _newBaseURI) public onlyOwner {
     _setBaseURI(_newBaseURI);
 } 
 
-function setEachURI(uint256 _id, string memory _newURI) public onlyOwner notFrozen {
+function setEachURI(uint256 _id, string memory _newURI) public onlyOwner {
     _setURI(_id, _newURI);
 }
 
