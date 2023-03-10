@@ -9,7 +9,7 @@ import "../utils/GoTokensRole.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import "@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
@@ -17,7 +17,7 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "hardhat/console.sol";
 //https://ethereum.stackexchange.com/questions/93062/troubles-with-import-in-remix-ide/93063#93063
 
-contract COPF is Ownable, GoTokensRoles, ERC1155, ERC1155Burnable {
+contract COPF is Ownable, GoTokensRoles, ERC1155, ERC1155Burnable, ERC1155URIStorage {
 
 //ESCOPO GLOBAL = PROPRIEDADE
 
@@ -44,6 +44,9 @@ NegociationType dealType;
 
 uint32 public maxGlobalAllowedFlorestTokenizationPercentage = 80000; //it represents 80% => 80/100 = (for simplicity) 80000
 
+string private _baseURI = "";
+mapping (uint8 => string) private _tokenURIs;
+//string private _baseURIextended;
 mapping(uint16 => Plot[]) plotsInFlorest;
 mapping(uint16 => Asset[]) public assetsInFlorest;
 //assetId => florestId
@@ -139,12 +142,11 @@ function createAFlorest(
     return florestId;
 }
 
-function createAsset(uint32 _tokenizedPercentage, Asset memory asset, uint16 _correspondingFlorest, uint256[] memory ids, uint256[] memory amount) external {
+function createAsset(uint32 _tokenizedPercentage, Asset memory asset, uint16 _correspondingFlorest, uint256[] memory ids, uint256[] memory amount, string calldata _tokenURI ) external {
     //validate woodTypeForAsset is equal of florest's
     Florest storage florest = florestsInProperty[_correspondingFlorest];
     require(asset.woodTypeForAsset == florest.woodTypeForFlorest, "diff wood");
     uint16 assetIdInCurrentFlorest = assetsQuantityInFlorest[_correspondingFlorest];
-    console.log("AIICF", assetIdInCurrentFlorest);
     //validade if percentage isn't bigger than one given to florest.
     require(_tokenizedPercentage <= getAllowedPercentagesOfTokenizationForAFlorest(_correspondingFlorest, assetIdInCurrentFlorest),"not allowed %");
     // validate if geographic location of different assets is the same
@@ -154,7 +156,6 @@ function createAsset(uint32 _tokenizedPercentage, Asset memory asset, uint16 _co
     } else {
         for(uint8 i = 0; i < (assetsInFlorest[_correspondingFlorest].length); i++){
             string storage geo = assetsInFlorest[_correspondingFlorest][i].geographicLocation;
-            console.log(geo);
             require(keccak256(abi.encodePacked(asset.geographicLocation)) != keccak256(abi.encodePacked(geo)),"asset exists");
         }
     assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.woodTypeForAsset,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
@@ -167,6 +168,7 @@ function createAsset(uint32 _tokenizedPercentage, Asset memory asset, uint16 _co
     setApprovalToTransferAssets(asset.currentTokenOwner, msg.sender, true);
     //increase number of assets minted in property
     assetIdInCurrentFlorest++;
+    //_setTokenURI()
 }
 
 function createAPlot(
@@ -214,6 +216,24 @@ function updateFlorest(
     console.log(getTokenizedPercentagesSumForAFlorest(_florestToUpdate));
     florest.tokenizationPercentageGivenToFlorest.push(_tokenizationPercentageGivenToFlorest);
     require(getAllowedSumPercentagesOfTokenizationForAFlorest(_florestToUpdate) <= 80000,"80%");
+}
+
+    /*╔══════════════════════════════╗
+      ║          URI FUNCTIONS       ║
+      ╚══════════════════════════════╝*/
+function setBaseURI(string memory _newBaseURI) public onlyOwner notFrozen {
+    _setBaseURI(_newBaseURI);
+} 
+
+function setEachURI(uint256 _id, string memory _newURI) public onlyOwner notFrozen {
+    _setURI(_id, _newURI);
+}
+
+function uri(uint256 tokenId) public view virtual override(ERC1155, ERC1155URIStorage) returns (string memory) {
+    string memory tokenURI = _tokenURIs[uint8(tokenId)];
+    // If token URI is set, concatenate base URI and tokenURI (via abi.encodePacked).
+    return bytes(tokenURI).length > 0 ? string(abi.encodePacked(_baseURI, tokenURI)) : super.uri(tokenId);
+    //return bytes(tokenURI).length > 0 ? tokenURI : _baseURI;
 }
 
 function getTokenizedPercentagesSumForAFlorest (uint16 _correspondingFlorest) internal view returns(uint32) {
