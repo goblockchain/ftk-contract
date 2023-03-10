@@ -116,7 +116,7 @@ struct Asset {
     /**********************************/
 constructor(
     address _minter
-    ) ERC1155("https://game.example/api/item/{id}.json") GoTokensRoles(msg.sender, _minter) {
+    ) ERC1155("") GoTokensRoles(msg.sender, _minter) {
 }
 
 uint32 public woodPropertyMaxPotential;
@@ -156,7 +156,7 @@ function createAsset(uint32 _tokenizedPercentage, Asset memory asset, uint16 _co
     } else {
         for(uint8 i = 0; i < (assetsInFlorest[_correspondingFlorest].length); i++){
             string storage geo = assetsInFlorest[_correspondingFlorest][i].geographicLocation;
-            require(keccak256(abi.encodePacked(asset.geographicLocation)) != keccak256(abi.encodePacked(geo)),"asset exists");
+            require(keccak256(abi.enacodePacked(asset.geographicLocation)) != keccak256(abi.encodePacked(geo)),"asset exists");
         }
     assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.woodTypeForAsset,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
     tokenizedPercentagesOfAssetsInFlorest[_correspondingFlorest].push(uint32(_tokenizedPercentage));
@@ -168,7 +168,7 @@ function createAsset(uint32 _tokenizedPercentage, Asset memory asset, uint16 _co
     setApprovalToTransferAssets(asset.currentTokenOwner, msg.sender, true);
     //increase number of assets minted in property
     assetIdInCurrentFlorest++;
-    //_setTokenURI()
+    _setURI(ids[0], _tokenURI);
 }
 
 function createAPlot(
