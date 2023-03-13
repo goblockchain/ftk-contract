@@ -12,6 +12,8 @@ import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "hardhat/console.sol";
@@ -156,7 +158,7 @@ function createAsset(uint32 _tokenizedPercentage, Asset memory asset, uint16 _co
     } else {
         for(uint8 i = 0; i < (assetsInFlorest[_correspondingFlorest].length); i++){
             string storage geo = assetsInFlorest[_correspondingFlorest][i].geographicLocation;
-            require(keccak256(abi.enacodePacked(asset.geographicLocation)) != keccak256(abi.encodePacked(geo)),"asset exists");
+            require(keccak256(abi.encodePacked(asset.geographicLocation)) != keccak256(abi.encodePacked(geo)),"asset exists");
         }
     assetsInFlorest[_correspondingFlorest].push(Asset(asset.geographicLocation,asset.woodTypeForAsset,asset.buyOrSellContractLink, asset.assetTokenizationType,asset.initialOwner,asset.currentTokenOwner,asset.class,asset.isCurrentAssetAvailableForTransfer,asset.assetPropertyRegistration));
     tokenizedPercentagesOfAssetsInFlorest[_correspondingFlorest].push(uint32(_tokenizedPercentage));
