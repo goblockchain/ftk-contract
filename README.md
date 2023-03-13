@@ -216,3 +216,10 @@ struct Plot {
     uint16 plotPlantingYear;
     uint16 plotCutYear;
 }
+
+# How the mechanic works:
+
+For the current project for which the contract was designed, there is the ADMIN_ROLE and MINTER_ROLE, for which both will use the address of the company(=FTK).
+Therefore, FTK will have the rights to mint any NFT and to transfer the ownership of the contract to another wallet if needed.
+The `createAsset` function is the one responsible for minting an NFT to the user's public address. The user's wallet will be passed as a parameter to the function call and it will be used to mint an NFT to the asset's `currentTokenOwner`(which at the beginning will be the same as the `initialOwner`. Therefore, the currentTokenOwner is the address of the current logged user. The transferring of the NFT will only be available to an operator who's received approval for the transfer according to the ERC1155 specification. The MINTER_ROLE or the ADMIN_ROLE will receive this approval before minting an NFT to the currentTokenOwner of the asset. 
+The owner (=FTK) of the contracts will also be responsible for updating the baseURI and the tokenURI so that the images can be properly displayed at the front-end.
