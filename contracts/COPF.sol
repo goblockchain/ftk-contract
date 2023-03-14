@@ -9,11 +9,12 @@ import "../utils/GoTokensRole.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "hardhat/console.sol";
@@ -46,12 +47,10 @@ NegociationType dealType;
 
 uint32 public maxGlobalAllowedFlorestTokenizationPercentage = 80000; //it represents 80% => 80/100 = (for simplicity) 80000
 
-string private _baseURI = "";
-mapping (uint8 => string) private _tokenURIs;
-//string private _baseURIextended;
+mapping (uint256 => string) private _uris;
+string private uri_;
 mapping(uint16 => Plot[]) plotsInFlorest;
 mapping(uint16 => Asset[]) public assetsInFlorest;
-//assetId => florestId
 mapping(uint16 => uint16) public assetsQuantityInFlorest;
 mapping(uint16 => Florest) public florestsInProperty;
 mapping(uint16 => uint32[]) public tokenizedPercentagesOfAssetsInFlorest;
@@ -117,8 +116,9 @@ struct Asset {
       ╚═════════════════════════════╝*/
     /**********************************/
 constructor(
-    address _minter
-    ) ERC1155("") GoTokensRoles(msg.sender, _minter) {
+    address _minter,
+    string memory contractURI_
+    ) ERC1155(contractURI_) GoTokensRoles(msg.sender, _minter) {
 }
 
 uint32 public woodPropertyMaxPotential;
@@ -170,7 +170,12 @@ function createAsset(uint32 _tokenizedPercentage, Asset memory asset, uint16 _co
     setApprovalToTransferAssets(asset.currentTokenOwner, msg.sender, true);
     //increase number of assets minted in property
     assetIdInCurrentFlorest++;
-    _setURI(ids[0], _tokenURI);
+    _uris[ids[0]] = _tokenURI;
+    //_setURI(ids[0], _tokenURI);
+}
+
+function token_uri(uint256 tokenId) public view returns (string memory) {
+    return(_uris[tokenId]);
 }
 
 function createAPlot(
@@ -223,19 +228,17 @@ function updateFlorest(
     /*╔══════════════════════════════╗
       ║          URI FUNCTIONS       ║
       ╚══════════════════════════════╝*/
-function setBaseURI(string memory _newBaseURI) public onlyOwner {
-    _setBaseURI(_newBaseURI);
-} 
 
-function setEachURI(uint256 _id, string memory _newURI) public onlyOwner {
-    _setURI(_id, _newURI);
+function setNewURI(string memory _newuri) external onlyOwner {
+    _setURI(_newuri);
 }
 
-function uri(uint256 tokenId) public view virtual override(ERC1155, ERC1155URIStorage) returns (string memory) {
-    string memory tokenURI = _tokenURIs[uint8(tokenId)];
-    // If token URI is set, concatenate base URI and tokenURI (via abi.encodePacked).
-    return bytes(tokenURI).length > 0 ? string(abi.encodePacked(_baseURI, tokenURI)) : super.uri(tokenId);
-    //return bytes(tokenURI).length > 0 ? tokenURI : _baseURI;
+function _setURI(string memory newuri) internal override virtual  {
+    uri_ = newuri;
+}
+
+function uri(uint256) public view virtual override(ERC1155, ERC1155URIStorage) returns (string memory) {
+    return uri_;
 }
 
 function getTokenizedPercentagesSumForAFlorest (uint16 _correspondingFlorest) internal view returns(uint32) {
